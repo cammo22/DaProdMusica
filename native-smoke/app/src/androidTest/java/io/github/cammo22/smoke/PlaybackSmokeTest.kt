@@ -29,9 +29,9 @@ class PlaybackSmokeTest {
    val service=PlaybackService.instance!!;val failure=AtomicReference<String?>(null)
    instrumentation.runOnMainSync {service.player.addListener(object:Player.Listener{override fun onPlayerError(error:PlaybackException){failure.set(error.stackTraceToString());android.util.Log.e("DaProdSmoke",error.stackTraceToString())}});service.analysisEnabled=true}
    val data=JSONObject(context.assets.open("samples.json").bufferedReader().use{it.readText()});val samples=data.getJSONArray("tracks");val indices=data.getJSONArray("indices")
-   for(i in 0 until indices.length()){
+   for(i in 0 until samples.length()){
     val queue=samples
-    instrumentation.runOnMainSync {service.setQueue(queue,indices.getInt(i))}
+    instrumentation.runOnMainSync {service.analysisEnabled=i%2==0;service.setQueue(queue,i)}
     var position=0L;val started=SystemClock.elapsedRealtime()
     while(position<1500&&failure.get()==null&&SystemClock.elapsedRealtime()-started<20000){Thread.sleep(100);instrumentation.runOnMainSync {position=service.player.currentPosition}}
     assertNull(failure.get(),failure.get());assertTrue("Decoded playback never advanced for sample $i",position>=1500)
@@ -46,7 +46,24 @@ class PlaybackSmokeTest {
    instrumentation.runOnMainSync {after=service.player.currentPosition;service.player.pause()}
    assertNull(failure.get(),failure.get());assertTrue("Playback stopped when Activity left foreground",after-before>1000)
    instrumentation.runOnMainSync {assertTrue("PCM analysis was never produced",service.features.optLong("sequence")>0)}
+   screen.moveToState(Lifecycle.State.RESUMED)
+   instrumentation.runOnMainSync {service.setQueue(samples,0)}
+   Thread.sleep(1500)
+   screen.onActivity {assertTrue("Emulator must support PiP",it.pip.supported());assertTrue("PiP entry was refused",it.pip.enter())}
+   Thread.sleep(1500)
+   screen.onActivity {assertTrue("Activity never entered PiP",it.isInPictureInPictureMode);assertNotNull("Native mini player is missing",it.window.decorView.findViewWithTag<android.view.View>("daprod-mini-player"))}
+   context.sendBroadcast(Intent(context,io.github.cammo22.music.PlaybackActionReceiver::class.java).setAction("pause"))
+   Thread.sleep(500)
+   instrumentation.runOnMainSync {assertFalse("PiP pause did not reach the player",service.player.isPlaying)}
+   context.sendBroadcast(Intent(context,io.github.cammo22.music.PlaybackActionReceiver::class.java).setAction("next"))
+   Thread.sleep(500)
+   instrumentation.runOnMainSync {assertEquals("PiP next did not change the track",1,service.player.currentMediaItemIndex)}
+   context.sendBroadcast(Intent(context,io.github.cammo22.music.PlaybackActionReceiver::class.java).setAction("play"))
+   Thread.sleep(1000)
+   instrumentation.runOnMainSync {assertTrue("PiP play did not resume audio",service.player.isPlaying);service.player.pause()}
+   assertNull(failure.get(),failure.get())
   }
  }
 }
+
 

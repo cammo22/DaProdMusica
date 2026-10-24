@@ -18,3 +18,6 @@ native-smoke/app/src/main/java/io/github/cammo22/smoke/PlaybackService.kt
 release-artifacts/
 *.p12
 *.pem
+
+native-smoke/app/src/main/java/io/github/cammo22/smoke/PipController.kt
+
