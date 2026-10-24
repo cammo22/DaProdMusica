@@ -61,8 +61,14 @@ $('#pip').onclick=()=>engine.command('enterPip').catch(e=>toast(String(e)));$('#
 async function checkUpdates(show=false){if(show)$('#update-dialog').showModal();$('#update-status').textContent='Controllo in corso…';try{const response=await fetch('https://api.github.com/repos/cammo22/DaProdMusica/releases?per_page=10',{signal:AbortSignal.timeout(7000)});if(!response.ok)throw Error();const releases=await response.json();const release=releases.filter(r=>!r.draft&&/^v?\d+\.\d+\.\d+$/.test(r.tag_name)).reduce((a,b)=>!a||newer(b.tag_name,a.tag_name)?b:a,null);if(!release)throw Error();const available=newer(release.tag_name);$('#update-status').textContent=available?`È disponibile ${release.tag_name}. Scarica il pacchetto per il tuo dispositivo.`:'Stai usando la versione più recente.';if(available&&!show)toast(`Nuova frequenza disponibile: ${release.tag_name}`);}catch{$('#update-status').textContent='Controllo non disponibile. Puoi aprire la pagina delle release.';}}
 $('#updates').onclick=()=>checkUpdates(true);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&engine.native)engine.command('state').then(s=>engine.apply(s)).catch(()=>{});});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#world').hidden)closeWorld();if(e.code==='Space'&&!['INPUT','SELECT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();$('#play').click();}});
-try{const response=await fetch('./catalog.json');if(!response.ok)throw Error();catalog=await response.json();selected=catalog.albums[0];for(const a of catalog.albums){const tracks=a.tracks.map(t=>({...t,album:a.title,albumId:a.id,artwork:t.artwork||a.artwork}));all.push(...tracks);views.set(a.id,shuffled(tracks));}try{lyrics=validateLyrics(await(await fetch('./lyrics.json')).json());}catch{}renderGalaxy();renderAlbums();renderTracks();await engine.init();await engine.setRepeat(true);const volume=read('dap-volume',.8);await engine.setVolume(volume);$('#volume').value=volume;if(engine.native&&engine.pipSupported){$('#pip').hidden=false;$('#pip-setting').hidden=false;$('#pip-description').hidden=false;$('#pip-auto').checked=engine.pipEnabled;}checkUpdates();}catch(e){toast('Catalogo non disponibile: '+String(e));$('#play').disabled=true;$('#all-play').disabled=true;}
-
-
-
-
+try{
+ const response=await fetch('./catalog.json');if(!response.ok)throw Error();catalog=await response.json();selected=catalog.albums[0];
+ for(const a of catalog.albums){const tracks=a.tracks.map(t=>({...t,album:a.title,albumId:a.id,artwork:t.artwork||a.artwork}));all.push(...tracks);views.set(a.id,shuffled(tracks));}
+ try{lyrics=validateLyrics(await(await fetch('./lyrics.json')).json());}catch{}
+ renderGalaxy();renderAlbums();renderTracks();
+ try{
+  await engine.init();await engine.setRepeat(true);const volume=read('dap-volume',.8);await engine.setVolume(volume);$('#volume').value=volume;
+  if(engine.native&&engine.pipSupported){$('#pip').hidden=false;$('#pip-setting').hidden=false;$('#pip-description').hidden=false;$('#pip-auto').checked=engine.pipEnabled;}
+ }catch(error){toast('Il player non è ancora pronto. Premi Play per riprovare.');}
+ checkUpdates();
+}catch(e){toast('Catalogo non disponibile: '+String(e));$('#play').disabled=true;$('#all-play').disabled=true;}

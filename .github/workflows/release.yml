@@ -135,4 +135,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ needs.verify.outputs.version }}
         run: |
-          gh release create "v$VERSION" release-artifacts/* --draft --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Universi sonori" --notes-file "releases/$VERSION.md"
+          status=$(gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null || true)
+          if [ "$status" = true ]; then
+            gh release edit "v$VERSION" --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Universi sonori" --notes-file "releases/$VERSION.md"
+            gh release upload "v$VERSION" release-artifacts/* --clobber
+          elif [ -z "$status" ]; then
+            gh release create "v$VERSION" release-artifacts/* --draft --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Universi sonori" --notes-file "releases/$VERSION.md"
+          else
+            echo 'Refusing to overwrite a published release.' >&2
+            exit 1
+          fi

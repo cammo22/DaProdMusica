@@ -18,7 +18,7 @@ import org.json.JSONArray
 import kotlin.math.*
 
 @InvokeArg
-class ExecuteArgs { var op:String="state";var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f }
+class ExecuteArgs { var op:String="state";var requestId:Long=0;var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f }
 
 @UnstableApi
 @TauriPlugin
@@ -29,7 +29,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
  }
  private val handler=Handler(Looper.getMainLooper())
  var pipEnabled=true
- private var uiAnalysis=false
+ private var uiAnalysis=false;private var newestQueueRequest=0L
  private var mini:MiniView?=null
  override fun load(webView:WebView){active=this;pipEnabled=activity.getPreferences(0).getBoolean("pip",true);refreshPip()}
  override fun onResume(){PlaybackService.instance?.analysisEnabled=uiAnalysis||activity.isInPictureInPictureMode;refreshPip()}
@@ -45,6 +45,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
  private fun waitService(invoke:Invoke,args:ExecuteArgs,count:Int){handler.postDelayed({if(PlaybackService.instance!=null)perform(invoke,args)else if(count<100)waitService(invoke,args,count+1)else invoke.reject("Avvio player troppo lento. Riprova premendo Play.")},50)}
  private fun perform(invoke:Invoke,args:ExecuteArgs){try{
   val service=PlaybackService.instance?:throw IllegalStateException("Player non avviato");val p=service.player
+  if(args.op=="queue"){if(args.requestId<newestQueueRequest){invoke.resolve(JSObject(service.snapshot().toString()));return};newestQueueRequest=args.requestId}
   when(args.op){"analysis"->{uiAnalysis=args.enabled;service.analysisEnabled=uiAnalysis||activity.isInPictureInPictureMode};"queue"->service.setQueue(JSONArray(args.items),args.index);"play"->p.play();"pause"->p.pause();"next"->p.seekToNextMediaItem();"prev"->if(p.currentPosition>3000)p.seekTo(0)else p.seekToPreviousMediaItem();"seek"->p.seekTo((args.position*1000).toLong().coerceAtLeast(0));"repeat"->p.repeatMode=if(args.enabled)Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF;"volume"->p.volume=args.volume.coerceIn(0f,1f)}
   if(args.op!="state")refreshPip();val state=service.snapshot();if(args.op!="init"&&args.op!="queue")state.remove("queue");state.put("pipSupported",canPip());state.put("pipEnabled",pipEnabled);invoke.resolve(JSObject(state.toString()))
  }catch(e:Exception){invoke.reject(e.message?:"Errore player")}}
@@ -84,4 +85,5 @@ class MiniView(context:Context):View(context){
   postInvalidateDelayed(if(p?.isPlaying==true)66 else 500)
  }
 }
+
 
