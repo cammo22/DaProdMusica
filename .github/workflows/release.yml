@@ -59,6 +59,9 @@ jobs:
       - run: npm run android:init -- --ci
       - run: node scripts/configure-android.mjs
       - run: npm run android:build -- --apk --target aarch64 --ci
+        env:
+          RUSTFLAGS: -C link-arg=-Wl,-z,max-page-size=16384
+          CARGO_TARGET_AARCH64_LINUX_ANDROID_RUSTFLAGS: -C link-arg=-Wl,-z,max-page-size=16384
       - name: Sign and verify release APK
         env:
           KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
