@@ -39,6 +39,9 @@ class PlaybackSmokeTest {
     instrumentation.runOnMainSync {service.player.pause()};Thread.sleep(100)
     instrumentation.runOnMainSync {assertFalse(service.player.isPlaying);service.player.play()}
    }
+   // Test real background playback independently of auto-PiP, which intentionally
+   // keeps the Activity visible and prevents a transition to the stopped state.
+   screen.onActivity {it.pip.updateEnabled(false)}
    screen.moveToState(Lifecycle.State.CREATED)
    var before=0L;var after=0L
    instrumentation.runOnMainSync {before=service.player.currentPosition}
@@ -49,7 +52,7 @@ class PlaybackSmokeTest {
    screen.moveToState(Lifecycle.State.RESUMED)
    instrumentation.runOnMainSync {service.setQueue(samples,0)}
    Thread.sleep(1500)
-   screen.onActivity {assertTrue("Emulator must support PiP",it.pip.supported());assertTrue("PiP entry was refused",it.pip.enter())}
+   screen.onActivity {it.pip.updateEnabled(true);assertTrue("Emulator must support PiP",it.pip.supported());assertTrue("PiP entry was refused",it.pip.enter())}
    Thread.sleep(1500)
    screen.onActivity {assertTrue("Activity never entered PiP",it.isInPictureInPictureMode);assertNotNull("Native mini player is missing",it.window.decorView.findViewWithTag<android.view.View>("daprod-mini-player"))}
    context.sendBroadcast(Intent(context,io.github.cammo22.music.PlaybackActionReceiver::class.java).setAction("pause"))
