@@ -1,0 +1,30 @@
+# Build the Linux binary on Ubuntu 24.04 first; run flatpak-builder from this directory.
+id: io.github.cammo22.daprodmusica
+runtime: org.gnome.Platform
+runtime-version: '49'
+sdk: org.gnome.Sdk
+command: daprod-musica
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --share=ipc
+  - --share=network
+  - --device=dri
+modules:
+  - name: daprod-musica
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 daprod-musica /app/bin/daprod-musica
+      - install -Dm644 io.github.cammo22.daprodmusica.desktop /app/share/applications/io.github.cammo22.daprodmusica.desktop
+      - install -Dm644 io.github.cammo22.daprodmusica.metainfo.xml /app/share/metainfo/io.github.cammo22.daprodmusica.metainfo.xml
+      - install -Dm644 icon.svg /app/share/icons/hicolor/scalable/apps/io.github.cammo22.daprodmusica.svg
+    sources:
+      - type: file
+        path: ../../src-tauri/target/release/daprod-musica
+      - type: file
+        path: io.github.cammo22.daprodmusica.desktop
+      - type: file
+        path: io.github.cammo22.daprodmusica.metainfo.xml
+      - type: file
+        path: ../../public/icon.svg

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=DaProd Musica
+Comment=Ogni album, un universo
+Exec=daprod-musica
+Icon=io.github.cammo22.daprodmusica
+Terminal=false
+Categories=AudioVideo;Audio;Player;

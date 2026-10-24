@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Open only DaProd release pages in the system browser.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    {"identifier":"opener:allow-open-url", "allow":[
+      {"url":"https://github.com/cammo22/DaProdMusica/releases*"},
+      {"url":"https://github.com/cammo22/DapGalleria/releases*"}
+    ]}
+  ]
+}

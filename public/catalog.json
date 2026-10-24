@@ -1,0 +1,308 @@
+{
+  "version": 1,
+  "albums": [
+    {
+      "id": "5adba42f90e6a3da",
+      "title": "vesuvio quantico",
+      "color": "#ff875b",
+      "world": "Magma",
+      "subtitle": "Radici antiche. Frequenze future.",
+      "description": "La voce di Napoli attraversa una nuova dimensione. Un viaggio tra memoria, lava e frequenze elettroniche.",
+      "art": "vesuvio",
+      "tracks": [
+        {
+          "id": "643d82de7ba99094",
+          "title": "(BONUS TRACK) E Babbà ft DaProd",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/643d82de7ba99094.mp3"
+        },
+        {
+          "id": "bab596a2661ce087",
+          "title": "(Edited VER) Sei una cosa grande ft Modugno",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/bab596a2661ce087.mp3"
+        },
+        {
+          "id": "5f2dcb1faa134377",
+          "title": "1 voce 1 chitarra ft Bruno Martino",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/5f2dcb1faa134377.mp3"
+        },
+        {
+          "id": "e78d609da3770c51",
+          "title": "Balla balla ballerino ft Lucio Dalla",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/e78d609da3770c51.mp3"
+        },
+        {
+          "id": "022a895588d8ff0c",
+          "title": "Che Femmina! ft Aurelio Fierro",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/022a895588d8ff0c.mp3"
+        },
+        {
+          "id": "41940826ae6373b8",
+          "title": "Come ha fatto tua mamma! ft Orchestra Italiana",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/41940826ae6373b8.mp3"
+        },
+        {
+          "id": "f38840502530c3f9",
+          "title": "Fumo negli occhi ft FrancoBruno",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/f38840502530c3f9.mp3"
+        },
+        {
+          "id": "e3d2ad60294e63fa",
+          "title": "Giacca Rossa ft Massimo Ranieri",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/e3d2ad60294e63fa.mp3"
+        },
+        {
+          "id": "3965b472f3f20251",
+          "title": "Indifferentemente ft Maria Nazionale",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/3965b472f3f20251.mp3"
+        },
+        {
+          "id": "636a4553a92cbc10",
+          "title": "Infermiera di notte ft Gianni Celeste",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/636a4553a92cbc10.mp3"
+        },
+        {
+          "id": "216d873b431179dc",
+          "title": "li per li ft Aurelio Fierro",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/216d873b431179dc.mp3"
+        },
+        {
+          "id": "61baea98baa203fd",
+          "title": "Lusingami ft Sergio Bruni",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/61baea98baa203fd.mp3"
+        },
+        {
+          "id": "1c6a45779c6e7263",
+          "title": "Ma se viene stasera ft Alessio",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/1c6a45779c6e7263.mp3"
+        },
+        {
+          "id": "6a51d5d5cb83c011",
+          "title": "Malafemmina ft Toto",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/6a51d5d5cb83c011.mp3"
+        },
+        {
+          "id": "b0798e6eb2ee05bc",
+          "title": "Malammore ft Franco Ricciardi",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/b0798e6eb2ee05bc.mp3"
+        },
+        {
+          "id": "c7bb494f16f5e94a",
+          "title": "Malinconia ft Aurelio Fierro (Patrizio REMIX)",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/c7bb494f16f5e94a.mp3"
+        },
+        {
+          "id": "7f6bb023d5bbe36f",
+          "title": "maliziosa ft eddy Napoli",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/7f6bb023d5bbe36f.mp3"
+        },
+        {
+          "id": "aec113e914d71bee",
+          "title": "Na Sbandata ft Patrizio",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/aec113e914d71bee.mp3"
+        },
+        {
+          "id": "7b799a4d27da8f51",
+          "title": "Passione ft Alan Sorrenti",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/7b799a4d27da8f51.mp3"
+        },
+        {
+          "id": "bd24a017d3e6901a",
+          "title": "Pensaci Bene ft Roberto Murolo (Remix)",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/bd24a017d3e6901a.mp3"
+        },
+        {
+          "id": "a399262428f95ecc",
+          "title": "Pensaci Bene ft Roberto Murolo",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/a399262428f95ecc.mp3"
+        },
+        {
+          "id": "30bd03c2b5eabaa5",
+          "title": "Ragione e Sentimento Testo di Maria Nazionale",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/30bd03c2b5eabaa5.mp3"
+        },
+        {
+          "id": "38029c8631a60257",
+          "title": "Reginella ft Libero Bovio e Mario Abbate",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/38029c8631a60257.mp3"
+        },
+        {
+          "id": "1de3f84c334d2645",
+          "title": "Resta con me ft Maria Nazionale e Domenico Modugno",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/1de3f84c334d2645.mp3"
+        },
+        {
+          "id": "fddfa7f11bda758c",
+          "title": "Sabato notte ft Franco Moreno",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/fddfa7f11bda758c.mp3"
+        },
+        {
+          "id": "b8aff95e40ad8efe",
+          "title": "Soffro per te ft Corrado",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/b8aff95e40ad8efe.mp3"
+        },
+        {
+          "id": "34151f14bf7803ff",
+          "title": "Sono il vento ft Aurelio Fierro",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/34151f14bf7803ff.mp3"
+        },
+        {
+          "id": "8f4775515459053c",
+          "title": "Svegliati ft Sergio Bruni",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/8f4775515459053c.mp3"
+        },
+        {
+          "id": "05abbe53ef7091d5",
+          "title": "Treno ft Franco Ricciardi",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/05abbe53ef7091d5.mp3"
+        },
+        {
+          "id": "dfc2602f08e961aa",
+          "title": "Una sera di maggio ft Sergio Bruni",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/dfc2602f08e961aa.mp3"
+        },
+        {
+          "id": "edac5111bca4e5d2",
+          "title": "Vaffanculo con chi vuoi tu ft Squallor",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/edac5111bca4e5d2.mp3"
+        },
+        {
+          "id": "ee3ac50ad47e5fc0",
+          "title": "Vorrei Baciarti ft Teresa de Sio",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/ee3ac50ad47e5fc0.mp3"
+        },
+        {
+          "id": "d36fca66c5f76951",
+          "title": "失控的心 (Remix)",
+          "artist": "DaProd",
+          "src": "media/5adba42f90e6a3da/d36fca66c5f76951.mp3"
+        }
+      ]
+    },
+    {
+      "id": "87bb827f2e887463",
+      "title": "DaProdSelecta",
+      "color": "#c3a1ff",
+      "world": "Orbita",
+      "subtitle": "Nessuna regola. Solo vibrazioni.",
+      "description": "La selezione DaProd: incontri inattesi, traiettorie libere e suoni da abitare.",
+      "art": "selecta",
+      "tracks": [
+        {
+          "id": "27624f32c69de340",
+          "title": "BRO, CONCENTRATI",
+          "artist": "DaProd",
+          "src": "media/87bb827f2e887463/27624f32c69de340.mp3"
+        },
+        {
+          "id": "0f5baf93e03d961b",
+          "title": "popcorn e patati cammo",
+          "artist": "DaProd",
+          "src": "media/87bb827f2e887463/0f5baf93e03d961b.mp3"
+        }
+      ]
+    },
+    {
+      "id": "8306a498272b182a",
+      "title": "sistema.exe",
+      "color": "#a6f777",
+      "world": "Circuito",
+      "subtitle": "Umano. Sintetico. Fuori controllo.",
+      "description": "Accendi il sistema. Tra identità digitali e impulsi elettrici, ogni traccia apre una nuova connessione.",
+      "art": "sistema",
+      "tracks": [
+        {
+          "id": "c8299455d026d41a",
+          "title": "Sintetico MC (Remix)",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/c8299455d026d41a.mp3"
+        },
+        {
+          "id": "d604c141e0ef7c41",
+          "title": "404",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/d604c141e0ef7c41.mp3"
+        },
+        {
+          "id": "b5b925bc7cb605db",
+          "title": "BOOT SEQUENCE",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/b5b925bc7cb605db.mp3"
+        },
+        {
+          "id": "c263a0fbc0d776e0",
+          "title": "CARNE",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/c263a0fbc0d776e0.mp3"
+        },
+        {
+          "id": "68ffa60c4bd47e0f",
+          "title": "DEEP FAKE",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/68ffa60c4bd47e0f.mp3"
+        },
+        {
+          "id": "59bd98caaf2c197c",
+          "title": "ERRORE 0x00",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/59bd98caaf2c197c.mp3"
+        },
+        {
+          "id": "56c360590de53dd5",
+          "title": "IL MODELLO",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/56c360590de53dd5.mp3"
+        },
+        {
+          "id": "2a2d8ae3de2157b7",
+          "title": "LATENZA",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/2a2d8ae3de2157b7.mp3"
+        },
+        {
+          "id": "bb756cdd77dd540f",
+          "title": "REBOOT FINE TRASMISSIONE",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/bb756cdd77dd540f.mp3"
+        },
+        {
+          "id": "c444d1fd862d68fb",
+          "title": "SURVEILLANCE",
+          "artist": "Sintetico MC · DaProd",
+          "src": "media/8306a498272b182a/c444d1fd862d68fb.mp3"
+        }
+      ]
+    }
+  ]
+}
