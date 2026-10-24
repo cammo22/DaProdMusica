@@ -74,3 +74,8 @@ Flatpak ha ancora soltanto il manifest in `packaging/linux`; non è incluso in q
 - Build web, controllo Rust e build native nel workflow.
 
 Il brief creativo normalizzato è in `docs/CREATIVE_DIRECTION.md`; l'architettura Android in `docs/ANDROID.md`.
+
+### Preparare una release
+
+Con `gh` autenticato, commit e sorgenti già pushati, esegui `node scripts/prepare-release.mjs`. Il comando crea una bozza sul commit completo e avvia la compilazione; non salva token nel repository. Questo evita il limite del token Actions nella creazione di release su commit che modificano workflow. La bozza resta privata finché non viene pubblicata dopo la verifica degli allegati.
+
