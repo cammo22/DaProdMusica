@@ -1,6 +1,6 @@
-# DaProd Musica · 0.1.0
+# DaProd Musica · 0.2.0
 
-Player immersivo per gli album DaProd. Prima versione locale: browser e Windows, con progetto Tauri condiviso per Android e Linux.
+Player immersivo per gli album DaProd. Browser, Windows e Android condividono il progetto Tauri. Pacchetti nella [pagina release](https://github.com/cammo22/DaProdMusica/releases).
 
 ## Prova sul PC
 
@@ -20,7 +20,7 @@ Apri `http://127.0.0.1:5173`. In alternativa usa `AVVIA DaProd Musica.cmd` dopo 
 
 - Importazione delle sottocartelle come album, con ID stabili derivati dai nomi.
 - Player con pausa, seek, volume, precedente/successivo, ripetizione album, shuffle, ricerca e preferiti locali.
-- Tre ambienti procedurali originali: Magma, Circuito e Orbita. Web Audio analizza bassi, medi e alti; il puntatore deforma lo spazio e la pressione genera onde.
+- Cinque shader WebGL adattati da DaProdSuite: Tunnel al Neon, Impulso Frattale, Cromo Liquido, Griglia Retro e Inchiostro. Spettro a 64 bande, waveform, transienti, scie e deformazione touch. Licenza e provenienza in `THIRD_PARTY.md`.
 - Modalità immersiva, testi sincronizzati per frase, intensità e movimento ridotto o fermo.
 - Studio separato dal player: Whisper Tiny quantizzato in un Web Worker, editing LRC, inserimento del tempo attuale, bozze locali e import/export del catalogo testi.
 - Controllo delle release GitHub all’apertura e collegamento alle nuove versioni.
@@ -56,10 +56,10 @@ La configurazione Tauri è condivisa. Con JDK 17, Android SDK/NDK e target Rust 
 
 ```powershell
 npm run android:init
-npm run android:build -- --debug --target aarch64
+npm run android:build -- --apk --target aarch64 --ci
 ```
 
-È predisposto anche il workflow manuale `Build native previews`. L’APK debug e il comportamento su telefono non sono stati ancora verificati. Per una release servono firma stabile privata, player in background e gestione audio focus; sono ancora da integrare.
+Il workflow `Release Windows and Android` genera APK ARM64 release, lo firma con una chiave privata stabile custodita nei secrets GitHub e verifica firma e assenza del flag debug. Include i 45 brani per ascolto offline; richiede Android 8 o successivo. Lo Studio karaoke è escluso dall’APK. Il comportamento su telefono resta da provare: servizio audio in background e audio focus nativo sono ancora da integrare.
 
 ### Linux e Flatpak
 
@@ -81,7 +81,7 @@ Serve il runtime GNOME 49 e il relativo SDK. Il workflow manuale contiene l’in
 |---|---|
 | Browser locale e build statica | Implementati |
 | Installer Windows con album inclusi | Compilato localmente |
-| Android | Configurazione e workflow debug, non ancora compilato/verificato |
+| Android | Workflow release ARM64 con firma stabile e verifica automatica; prove fisiche da eseguire |
 | Flatpak | Manifest e workflow, non ancora compilato/verificato |
 | Avviso nuova versione | Implementato tramite GitHub Releases |
 | Installazione aggiornamenti dall’app | Da implementare con firma e gestione specifica per piattaforma |
@@ -90,13 +90,14 @@ Serve il runtime GNOME 49 e il relativo SDK. Il workflow manuale contiene l’in
 
 Gli aggiornamenti firmati desktop possono usare il [plugin updater Tauri](https://v2.tauri.app/plugin/updater/). Android richiede un percorso specifico verso l’installer di sistema; Flatpak va aggiornato tramite il suo repository. Non sono attivi aggiornamenti automatici silenziosi.
 
-Le canzoni in `public/media/` sono escluse da Git. Le build CI, finché non viene collegata una fonte audio, contengono interfaccia e metadati ma non possono riprodurre gli album. Non sono release per gli ascoltatori. La release Windows include gli album nel pacchetto; i file audio separati non sono versionati nel repository.
+Le canzoni in `public/media/` sono escluse da Git. Il workflow release ripristina il bundle audio indicato in `media-bundle.json`, controllandone SHA-256 prima di compilarlo nei pacchetti. Con `gh` autenticato si può ripristinarlo localmente con `node scripts/restore-media.mjs`.
 
 ## Architettura e verifiche
 
 - `src/main.js`: interfaccia del player e Web Audio.
 - `src/playback.js`: gestione concorrente delle richieste di riproduzione e navigazione.
-- `src/visualizer.js`: rendering Canvas originale, senza riuso del visualizer DaProdSuite.
+- `src/gpu-visualizer.js` / `src/suite-presets/`: renderer WebGL e shader DaProdSuite; fallback Canvas sui dispositivi senza WebGL.
+- `src/audio-features.js`: analisi audio e texture per gli shader.
 - `src/studio.js` / `src/transcribe.worker.js`: editor e inferenza separata dal thread dell’interfaccia.
 - `src/core.js`: LRC, catalogo testi, confronto versioni.
 - `scripts/import-music.mjs`: copia locale non distruttiva degli album.

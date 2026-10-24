@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — Android e shader DaProdSuite
+
+- Cinque effetti GPU della Suite, scie e interazione touch.
+- Analisi audio a 64 bande, waveform e rilevamento transienti.
+- Layout mobile e build Android senza Studio/modello karaoke.
+- Workflow per APK ARM64 firmato e installer Windows con tutti i 45 brani.
+- Verifica shader, integrità del catalogo, firma APK e checksum dei pacchetti.
+- Restano da provare i dispositivi reali; audio Android in background e installazione interna degli aggiornamenti non ancora implementati.
+
 ## 0.1.0 — Prima anteprima locale
 
 - Tre album e 45 brani importati senza modificare i file originali.
