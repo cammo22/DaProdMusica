@@ -1,0 +1,4 @@
+{
+  "build": {"beforeBuildCommand":"npm run build:player"},
+  "bundle": {"android":{"minSdkVersion":26}}
+}

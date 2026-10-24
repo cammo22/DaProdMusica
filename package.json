@@ -1,6 +1,6 @@
 {
   "name": "daprod-musica",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,8 @@
     "desktop": "tauri dev",
     "desktop:build": "tauri build",
     "android:init": "tauri android init",
-    "android:build": "tauri android build"
+    "android:build": "tauri android build",
+    "build:player": "vite build --mode player"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.1",

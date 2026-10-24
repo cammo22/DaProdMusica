@@ -9,3 +9,7 @@ public/media/
 *.keystore
 *.key
 .env*
+.media-cache/
+release-artifacts/
+*.p12
+*.pem

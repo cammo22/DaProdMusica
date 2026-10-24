@@ -1,0 +1,129 @@
+name: Release Windows and Android
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: sudo apt-get update && sudo apt-get install -y glslang-tools
+      - run: node scripts/check-shaders.mjs
+      - run: node scripts/restore-media.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm test
+      - id: version
+        run: |
+          node -e "const p=require('./package.json'), t=require('./src-tauri/tauri.conf.json');if(p.version!==t.version)process.exit(1);console.log('value='+p.version)" >> "$GITHUB_OUTPUT"
+  android:
+    needs: verify
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: sdkmanager 'ndk;27.2.12479018' 'platforms;android-35' 'build-tools;35.0.0'
+      - run: echo "NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: node scripts/restore-media.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm run android:init -- --ci
+      - run: npm run android:build -- --apk --target aarch64 --ci
+      - name: Sign and verify release APK
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          SIGNING_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE" && test -n "$SIGNING_PASSWORD"
+          printf '%s' "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/daprod.p12"
+          mkdir -p release-artifacts
+          mapfile -t apks < <(find src-tauri/gen/android/app/build/outputs/apk -name '*release*.apk')
+          test "${#apks[@]}" -eq 1
+          output="release-artifacts/DaProdMusica-${VERSION}-Android-arm64.apk"
+          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -f -p 4 "${apks[0]}" "$RUNNER_TEMP/aligned.apk"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" sign --ks "$RUNNER_TEMP/daprod.p12" --ks-type PKCS12 --ks-key-alias daprod --ks-pass env:SIGNING_PASSWORD --key-pass env:SIGNING_PASSWORD --out "$output" "$RUNNER_TEMP/aligned.apk"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$output" > release-artifacts/Android-signature.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$output" > release-artifacts/Android-package.txt
+          if grep -q application-debuggable release-artifacts/Android-package.txt; then exit 1; fi
+          cd release-artifacts && sha256sum *.apk > SHA256SUMS-Android.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: release-artifacts/
+          if-no-files-found: error
+  windows:
+    needs: verify
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - run: node scripts/restore-media.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm run desktop:build
+      - shell: pwsh
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          New-Item -ItemType Directory -Force release-artifacts | Out-Null
+          $output = "release-artifacts/DaProdMusica-$env:VERSION-Windows-Setup.exe"
+          Copy-Item "src-tauri/target/release/bundle/nsis/*-setup.exe" $output
+          $hash = (Get-FileHash $output -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $(Split-Path $output -Leaf)" | Set-Content release-artifacts/SHA256SUMS-Windows.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: release-artifacts/
+          if-no-files-found: error
+  draft:
+    needs: [verify,android,windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          merge-multiple: true
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          gh release create "v$VERSION" release-artifacts/* --draft --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Android e visualizer della Suite" --notes-file "releases/$VERSION.md"

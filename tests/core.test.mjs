@@ -13,6 +13,6 @@ test('Studio refuses a partially untimed document rather than silently dropping 
  assert.throws(()=>parseEditableLRC('[00:99]Errore'),/riga 1/);
  assert.deepEqual(parseEditableLRC('[ar:DaProd]\n[00:01]Voce'),[{time:1,text:'Voce'}]);
 });
-test('Only stable newer releases trigger updates',()=>{assert.equal(newer('v0.2.0'),true);assert.equal(newer('v0.1.0'),false);assert.equal(newer('0.0.9'),false);assert.equal(newer('v1.0.0-beta'),false);assert.equal(newer('junk'),false);assert.equal(newer('0.10.0','0.9.0'),true);});
+test('Only stable newer releases trigger updates',()=>{assert.equal(newer('v0.2.0','0.1.0'),true);assert.equal(newer('v0.1.0','0.1.0'),false);assert.equal(newer('0.0.9','0.1.0'),false);assert.equal(newer('v1.0.0-beta','0.1.0'),false);assert.equal(newer('junk','0.1.0'),false);assert.equal(newer('0.10.0','0.9.0'),true);});
 test('Imported lyrics reject malformed or unsafe time data',()=>{assert.throws(()=>validateLyrics({version:1,tracks:{song:[{time:-1,text:'x'}]}}));assert.throws(()=>validateLyrics({version:1,tracks:{song:[{time:NaN,text:'x'}]}}));assert.throws(()=>validateLyrics({version:2,tracks:{}}));assert.deepEqual(validateLyrics({version:1,tracks:{song:[{time:2,text:'b'},{time:0,text:'a'}]}}).song[0],{time:0,text:'a'});});
 test('Titles cannot inject markup',()=>assert.equal(escapeHTML('<img src="x">'), '&lt;img src=&quot;x&quot;&gt;'));

@@ -1,12 +1,40 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "DaProd Musica",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "io.github.cammo22.daprodmusica",
-  "build": {"beforeDevCommand": "npm run dev", "devUrl": "http://localhost:5173", "beforeBuildCommand": "npm run build", "frontendDist": "../dist"},
-  "app": {
-    "windows": [{"title":"DaProd Musica", "width":1360,"height":900,"minWidth":360,"minHeight":600,"backgroundColor":"#0a0b10"}],
-    "security": {"csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' ipc: http://ipc.localhost https://api.github.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; worker-src 'self' blob:"}
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
   },
-  "bundle": {"active":true,"targets":["nsis"],"icon":["icons/32x32.png","icons/128x128.png","icons/icon.ico"],"shortDescription":"Ogni album, un universo.","category":"Music"}
+  "app": {
+    "windows": [
+      {
+        "title": "DaProd Musica",
+        "width": 1360,
+        "height": 900,
+        "minWidth": 360,
+        "minHeight": 600,
+        "backgroundColor": "#0a0b10"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' ipc: http://ipc.localhost https://api.github.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdn.jsdelivr.net; worker-src 'self' blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.ico"
+    ],
+    "shortDescription": "Ogni album, un universo.",
+    "category": "Music"
+  }
 }
