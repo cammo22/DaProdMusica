@@ -25,7 +25,7 @@ export function toLRC(lines) { return lines.map(l=>{const cs=Math.round(l.time*1
 export function lyricIndex(lines, t) { let found=-1; for(let i=0;i<lines.length;i++) {if(lines[i].time<=t) found=i; else break;} return found; }
 export function newer(remote, current=VERSION) {
   if(!/^v?\d+\.\d+\.\d+$/.test(remote)) return false;
-  const a=remote.replace(/^v/,'').split('.').map(Number), b=current.split('.').map(Number);
+  const a=remote.replace(/^v/,'').split('.').map(Number), b=current.replace(/^v/,'').split('.').map(Number);
   for(let i=0;i<3;i++) { if(a[i]!==b[i]) return a[i]>b[i]; } return false;
 }
 export function validateLyrics(data) {
