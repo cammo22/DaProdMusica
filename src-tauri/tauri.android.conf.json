@@ -1,4 +1,4 @@
 {
-  "build": {"beforeBuildCommand":"npm run build:player"},
+  "build": {"beforeBuildCommand":"node scripts/build-android-web.mjs"},
   "bundle": {"android":{"minSdkVersion":26}}
 }

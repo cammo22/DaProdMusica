@@ -10,6 +10,7 @@ public/media/
 *.key
 .env*
 .media-cache/
+.lyrics-cache/
 release-artifacts/
 *.p12
 *.pem

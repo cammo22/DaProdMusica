@@ -4,303 +4,417 @@
     {
       "id": "5adba42f90e6a3da",
       "title": "vesuvio quantico",
-      "color": "#ff875b",
-      "world": "Magma",
-      "subtitle": "Radici antiche. Frequenze future.",
-      "description": "La voce di Napoli attraversa una nuova dimensione. Un viaggio tra memoria, lava e frequenze elettroniche.",
+      "color": "#99efd8",
+      "world": "Memoria liquida",
+      "subtitle": "Un ricordo del futuro, anno 2000.",
+      "description": "Vetro azzurro, vecchie radio e pomeriggi che non finiscono. Le voci di ieri galleggiano in un mare digitale: Napoli, come la ricordi in un sogno.",
       "art": "vesuvio",
+      "preset": "musica.aero-tides",
+      "era": "2000 / MEMORIE SOMMERSE",
+      "artwork": "artwork/ff0ec8a2eeb7235ea66e.jpg",
       "tracks": [
         {
           "id": "643d82de7ba99094",
-          "title": "(BONUS TRACK) E Babbà ft DaProd",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/643d82de7ba99094.mp3"
+          "title": "e babba ft daprod",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/643d82de7ba99094.mp3",
+          "artwork": "artwork/ff0ec8a2eeb7235ea66e.jpg",
+          "duration": 207.72
         },
         {
           "id": "bab596a2661ce087",
-          "title": "(Edited VER) Sei una cosa grande ft Modugno",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/bab596a2661ce087.mp3"
+          "title": "Edited VER Sei una cosa grande ft modugno",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/bab596a2661ce087.mp3",
+          "artwork": "artwork/964401b857d3893e9c50.jpg",
+          "duration": 202.872
         },
         {
           "id": "5f2dcb1faa134377",
-          "title": "1 voce 1 chitarra ft Bruno Martino",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/5f2dcb1faa134377.mp3"
+          "title": "1 voce e 1 chitarra ft bruno martino (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/5f2dcb1faa134377.mp3",
+          "artwork": "artwork/0075b23502cab678725e.jpg",
+          "duration": 178.8
         },
         {
           "id": "e78d609da3770c51",
-          "title": "Balla balla ballerino ft Lucio Dalla",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/e78d609da3770c51.mp3"
+          "title": "Balla balla ballerino ft lucio dalla",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/e78d609da3770c51.mp3",
+          "artwork": "artwork/b6b3c4501711012fe769.jpg",
+          "duration": 229.992
         },
         {
           "id": "022a895588d8ff0c",
-          "title": "Che Femmina! ft Aurelio Fierro",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/022a895588d8ff0c.mp3"
+          "title": "ueue che femmina ft aurelio fierro",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/022a895588d8ff0c.mp3",
+          "artwork": "artwork/6271a6627ce349285d4e.jpg",
+          "duration": 170.112
         },
         {
           "id": "41940826ae6373b8",
-          "title": "Come ha fatto tua mamma! ft Orchestra Italiana",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/41940826ae6373b8.mp3"
+          "title": "come ha fatto tua mamma? ft orchestra italiana (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/41940826ae6373b8.mp3",
+          "artwork": "artwork/5e5618bd60b037d7b6ea.jpg",
+          "duration": 202.8
         },
         {
           "id": "f38840502530c3f9",
           "title": "Fumo negli occhi ft FrancoBruno",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/f38840502530c3f9.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/f38840502530c3f9.mp3",
+          "artwork": "artwork/6bbe670543176a516a1a.jpg",
+          "duration": 179.304
         },
         {
           "id": "e3d2ad60294e63fa",
-          "title": "Giacca Rossa ft Massimo Ranieri",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/e3d2ad60294e63fa.mp3"
+          "title": "Giacca Rossa ft Massimo Ranieri  (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/e3d2ad60294e63fa.mp3",
+          "artwork": "artwork/5224e2c5a84313c59c81.jpg",
+          "duration": 195.6
         },
         {
           "id": "3965b472f3f20251",
-          "title": "Indifferentemente ft Maria Nazionale",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/3965b472f3f20251.mp3"
+          "title": "Indifferentemente",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/3965b472f3f20251.mp3",
+          "artwork": "artwork/ab9a7cb01334ebe5ff72.jpg",
+          "duration": 199.92
         },
         {
           "id": "636a4553a92cbc10",
-          "title": "Infermiera di notte ft Gianni Celeste",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/636a4553a92cbc10.mp3"
+          "title": "Infermiera di notte GianniCeleste",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/636a4553a92cbc10.mp3",
+          "artwork": "artwork/36105c9610d88f699830.jpg",
+          "duration": 214.944
         },
         {
           "id": "216d873b431179dc",
-          "title": "li per li ft Aurelio Fierro",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/216d873b431179dc.mp3"
+          "title": "li per li ft aurelio fierro",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/216d873b431179dc.mp3",
+          "artwork": "artwork/058ab00dfdbdd5bc0daf.jpg",
+          "duration": 180.36
         },
         {
           "id": "61baea98baa203fd",
-          "title": "Lusingami ft Sergio Bruni",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/61baea98baa203fd.mp3"
+          "title": "lusingami ft Sergio Bruni",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/61baea98baa203fd.mp3",
+          "artwork": "artwork/473cbd6f206a7b42b0a2.jpg",
+          "duration": 219.96
         },
         {
           "id": "1c6a45779c6e7263",
-          "title": "Ma se viene stasera ft Alessio",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/1c6a45779c6e7263.mp3"
+          "title": "Ma se viene stasera ft alessio",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/1c6a45779c6e7263.mp3",
+          "artwork": "artwork/27652db9b4706c12e7ef.jpg",
+          "duration": 196.992
         },
         {
           "id": "6a51d5d5cb83c011",
           "title": "Malafemmina ft Toto",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/6a51d5d5cb83c011.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/6a51d5d5cb83c011.mp3",
+          "artwork": "artwork/b8542f5bfc59f6648c7f.jpg",
+          "duration": 228.6
         },
         {
           "id": "b0798e6eb2ee05bc",
-          "title": "Malammore ft Franco Ricciardi",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/b0798e6eb2ee05bc.mp3"
+          "title": "Malammore ft FrancoRicciardi",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/b0798e6eb2ee05bc.mp3",
+          "artwork": "artwork/2c99fdf30b55ae690d6b.jpg",
+          "duration": 216.24
         },
         {
           "id": "c7bb494f16f5e94a",
-          "title": "Malinconia ft Aurelio Fierro (Patrizio REMIX)",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/c7bb494f16f5e94a.mp3"
+          "title": "malinconia testo di aurelio fierro ft patrizio (Remastered)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/c7bb494f16f5e94a.mp3",
+          "artwork": "artwork/dcdc52d059337c9cb16d.jpg",
+          "duration": 172.032
         },
         {
           "id": "7f6bb023d5bbe36f",
-          "title": "maliziosa ft eddy Napoli",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/7f6bb023d5bbe36f.mp3"
+          "title": "maliziosa ft eddy napoli",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/7f6bb023d5bbe36f.mp3",
+          "artwork": "artwork/2ac7fb739116895916ba.jpg",
+          "duration": 214.08
         },
         {
           "id": "aec113e914d71bee",
           "title": "Na Sbandata ft Patrizio",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/aec113e914d71bee.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/aec113e914d71bee.mp3",
+          "artwork": "artwork/8f3ff8231ccf7a3b1a69.jpg",
+          "duration": 181.92
         },
         {
           "id": "7b799a4d27da8f51",
-          "title": "Passione ft Alan Sorrenti",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/7b799a4d27da8f51.mp3"
+          "title": "Passione ft Alan sorrenti",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/7b799a4d27da8f51.mp3",
+          "artwork": "artwork/80072dc4a5f0dbbe34fe.jpg",
+          "duration": 279.984
         },
         {
           "id": "bd24a017d3e6901a",
           "title": "Pensaci Bene ft Roberto Murolo (Remix)",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/bd24a017d3e6901a.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/bd24a017d3e6901a.mp3",
+          "artwork": "artwork/9b740b9ad80a36e02cba.jpg",
+          "duration": 315
         },
         {
           "id": "a399262428f95ecc",
           "title": "Pensaci Bene ft Roberto Murolo",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/a399262428f95ecc.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/a399262428f95ecc.mp3",
+          "artwork": "artwork/892be7f61e1920211336.jpg",
+          "duration": 203.4
         },
         {
           "id": "30bd03c2b5eabaa5",
-          "title": "Ragione e Sentimento Testo di Maria Nazionale",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/30bd03c2b5eabaa5.mp3"
+          "title": "Ragione e Sentimento Testo di Maria Nazionale (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/30bd03c2b5eabaa5.mp3",
+          "artwork": "artwork/98827f8f1d3519128b58.jpg",
+          "duration": 259.824
         },
         {
           "id": "38029c8631a60257",
-          "title": "Reginella ft Libero Bovio e Mario Abbate",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/38029c8631a60257.mp3"
+          "title": "Reginella ft libero bovio e mario abbate",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/38029c8631a60257.mp3",
+          "artwork": "artwork/db1d8b436536a7416776.jpg",
+          "duration": 288.024
         },
         {
           "id": "1de3f84c334d2645",
-          "title": "Resta con me ft Maria Nazionale e Domenico Modugno",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/1de3f84c334d2645.mp3"
+          "title": "Resta con me ft maria nazionale e Domenico Modugno",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/1de3f84c334d2645.mp3",
+          "artwork": "artwork/551fe2022392238211b9.jpg",
+          "duration": 178.872
         },
         {
           "id": "fddfa7f11bda758c",
-          "title": "Sabato notte ft Franco Moreno",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/fddfa7f11bda758c.mp3"
+          "title": "Sabato notte ft Franco moreno",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/fddfa7f11bda758c.mp3",
+          "artwork": "artwork/d6f972ae52434dd8851e.jpg",
+          "duration": 184.032
         },
         {
           "id": "b8aff95e40ad8efe",
-          "title": "Soffro per te ft Corrado",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/b8aff95e40ad8efe.mp3"
+          "title": "Soffro per te ft Corrado (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/b8aff95e40ad8efe.mp3",
+          "artwork": "artwork/14483a758823919c244d.jpg",
+          "duration": 224.472
         },
         {
           "id": "34151f14bf7803ff",
-          "title": "Sono il vento ft Aurelio Fierro",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/34151f14bf7803ff.mp3"
+          "title": "sono il vento ft aurelio fierro",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/34151f14bf7803ff.mp3",
+          "artwork": "artwork/7c290aea58f432da9d89.jpg",
+          "duration": 187.152
         },
         {
           "id": "8f4775515459053c",
-          "title": "Svegliati ft Sergio Bruni",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/8f4775515459053c.mp3"
+          "title": "Svegliati ft Sergio Bruni (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/8f4775515459053c.mp3",
+          "artwork": "artwork/dc83f1c3da59070368df.jpg",
+          "duration": 177.36
         },
         {
           "id": "05abbe53ef7091d5",
-          "title": "Treno ft Franco Ricciardi",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/05abbe53ef7091d5.mp3"
+          "title": "treno ft francoricciardi",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/05abbe53ef7091d5.mp3",
+          "artwork": "artwork/de455a44ca11beb737b6.jpg",
+          "duration": 180
         },
         {
           "id": "dfc2602f08e961aa",
-          "title": "Una sera di maggio ft Sergio Bruni",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/dfc2602f08e961aa.mp3"
+          "title": "NA SERA 'E MAGGIO ft SERGIO BRUNI",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/dfc2602f08e961aa.mp3",
+          "artwork": "artwork/3a73680a5f2947cf7ac2.jpg",
+          "duration": 138.024
         },
         {
           "id": "edac5111bca4e5d2",
-          "title": "Vaffanculo con chi vuoi tu ft Squallor",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/edac5111bca4e5d2.mp3"
+          "title": "vaffanculo con chi vuoi tu ft Squallor (Remix)",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/edac5111bca4e5d2.mp3",
+          "artwork": "artwork/7e2d3a1639a2b3eeecac.jpg",
+          "duration": 223.32
         },
         {
           "id": "ee3ac50ad47e5fc0",
-          "title": "Vorrei Baciarti ft Teresa de Sio",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/ee3ac50ad47e5fc0.mp3"
+          "title": "Vorrei Baciarti ft Teresa de sio",
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/ee3ac50ad47e5fc0.mp3",
+          "artwork": "artwork/e76eeba70ae310157b62.jpg",
+          "duration": 230.04
         },
         {
           "id": "d36fca66c5f76951",
           "title": "失控的心 (Remix)",
-          "artist": "DaProd",
-          "src": "media/5adba42f90e6a3da/d36fca66c5f76951.mp3"
+          "artist": "daprod22",
+          "src": "media/5adba42f90e6a3da/d36fca66c5f76951.mp3",
+          "artwork": "artwork/d5b829cce9c9f9f46163.jpg",
+          "duration": 227.64
         }
       ]
     },
     {
       "id": "87bb827f2e887463",
       "title": "DaProdSelecta",
-      "color": "#c3a1ff",
-      "world": "Orbita",
-      "subtitle": "Nessuna regola. Solo vibrazioni.",
-      "description": "La selezione DaProd: incontri inattesi, traiettorie libere e suoni da abitare.",
+      "color": "#edb584",
+      "world": "Archivio sepolto",
+      "subtitle": "Segnali recuperati. Qualcuno era qui.",
+      "description": "Secoli dopo il lampo, sotto la cenere resta una memoria. Nastri ossidati, frequenze spezzate, voci sopravvissute alla terra. Premi play: riporta alla luce ciò che resta.",
       "art": "selecta",
+      "preset": "daprod.glitch-tape",
+      "era": "2476 / ARCHIVIO RIESUMATO",
+      "artwork": "artwork/e25ccc6cf21d6f9da6cd.jpg",
       "tracks": [
+        {
+          "id": "52ee6cf28636c615",
+          "title": "Babbasona",
+          "artist": "daprod22",
+          "src": "media/87bb827f2e887463/52ee6cf28636c615.mp3",
+          "artwork": "artwork/e25ccc6cf21d6f9da6cd.jpg",
+          "duration": 237.6
+        },
         {
           "id": "27624f32c69de340",
           "title": "BRO, CONCENTRATI",
-          "artist": "DaProd",
-          "src": "media/87bb827f2e887463/27624f32c69de340.mp3"
+          "artist": "daprod22",
+          "src": "media/87bb827f2e887463/27624f32c69de340.mp3",
+          "artwork": "artwork/124e4b82bc7df0a96a41.jpg",
+          "duration": 178.8
+        },
+        {
+          "id": "38a028d7f1edb9ee",
+          "title": "Midnight Pulse",
+          "artist": "daprod22",
+          "src": "media/87bb827f2e887463/38a028d7f1edb9ee.mp3",
+          "artwork": "artwork/8e5b4e976400f648cebe.jpg",
+          "duration": 202.824
         },
         {
           "id": "0f5baf93e03d961b",
           "title": "popcorn e patati cammo",
           "artist": "DaProd",
-          "src": "media/87bb827f2e887463/0f5baf93e03d961b.mp3"
+          "src": "media/87bb827f2e887463/0f5baf93e03d961b.mp3",
+          "duration": 192.384
         }
       ]
     },
     {
       "id": "8306a498272b182a",
       "title": "sistema.exe",
-      "color": "#a6f777",
-      "world": "Circuito",
-      "subtitle": "Umano. Sintetico. Fuori controllo.",
-      "description": "Accendi il sistema. Tra identità digitali e impulsi elettrici, ogni traccia apre una nuova connessione.",
+      "color": "#79d9ff",
+      "world": "Nucleo sintetico",
+      "subtitle": "Connessione stabilita. Entra nel nucleo.",
+      "description": "Architetture impossibili, metallo liquido e segnali che attraversano la rete. Ogni traccia è una porta: il sistema ti sta ascoltando.",
       "art": "sistema",
+      "preset": "daprod.neon-tunnel",
+      "era": "2099 / SISTEMA ONLINE",
+      "artwork": "artwork/313f08463a0553cb6890.jpg",
       "tracks": [
         {
           "id": "c8299455d026d41a",
-          "title": "Sintetico MC (Remix)",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/c8299455d026d41a.mp3"
+          "title": "Sintetico MC   (Remix)",
+          "artist": "daprod22",
+          "src": "media/8306a498272b182a/c8299455d026d41a.mp3",
+          "artwork": "artwork/313f08463a0553cb6890.jpg",
+          "duration": 147.264
         },
         {
           "id": "d604c141e0ef7c41",
-          "title": "404",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/d604c141e0ef7c41.mp3"
+          "title": "SinteticoMC - \"404\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/d604c141e0ef7c41.mp3",
+          "artwork": "artwork/46bc3a49d27c35d9eb88.jpg",
+          "duration": 189.504
         },
         {
           "id": "b5b925bc7cb605db",
-          "title": "BOOT SEQUENCE",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/b5b925bc7cb605db.mp3"
+          "title": "SinteticoMC - \"BOOT SEQUENCE\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/b5b925bc7cb605db.mp3",
+          "artwork": "artwork/5123bc774c98783d5bb8.jpg",
+          "duration": 208.584
         },
         {
           "id": "c263a0fbc0d776e0",
-          "title": "CARNE",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/c263a0fbc0d776e0.mp3"
+          "title": "SinteticoMC - \"CARNE\"",
+          "artist": "daprod22",
+          "src": "media/8306a498272b182a/c263a0fbc0d776e0.mp3",
+          "artwork": "artwork/9f0a840e4c3f03772c37.jpg",
+          "duration": 255
         },
         {
           "id": "68ffa60c4bd47e0f",
-          "title": "DEEP FAKE",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/68ffa60c4bd47e0f.mp3"
+          "title": "SinteticoMC - \"DEEP FAKE\"",
+          "artist": "daprod22",
+          "src": "media/8306a498272b182a/68ffa60c4bd47e0f.mp3",
+          "artwork": "artwork/370f6a069b1dc4aac81d.jpg",
+          "duration": 174.024
         },
         {
           "id": "59bd98caaf2c197c",
-          "title": "ERRORE 0x00",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/59bd98caaf2c197c.mp3"
+          "title": "SinteticoMC - \"ERRORE 0x00\"",
+          "artist": "daprod22",
+          "src": "media/8306a498272b182a/59bd98caaf2c197c.mp3",
+          "artwork": "artwork/49eaf4942b88ba2394a6.jpg",
+          "duration": 192.48
         },
         {
           "id": "56c360590de53dd5",
-          "title": "IL MODELLO",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/56c360590de53dd5.mp3"
+          "title": "SinteticoMC - \"IL MODELLO\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/56c360590de53dd5.mp3",
+          "artwork": "artwork/6877e8ad595f313e6e8d.jpg",
+          "duration": 201.312
         },
         {
           "id": "2a2d8ae3de2157b7",
-          "title": "LATENZA",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/2a2d8ae3de2157b7.mp3"
+          "title": "SinteticoMC - \"LATENZA\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/2a2d8ae3de2157b7.mp3",
+          "artwork": "artwork/769b014c9a3635684fec.jpg",
+          "duration": 249.36
         },
         {
           "id": "bb756cdd77dd540f",
-          "title": "REBOOT FINE TRASMISSIONE",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/bb756cdd77dd540f.mp3"
+          "title": "SinteticoMC - \"REBOOT / FINE TRASMISSIONE\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/bb756cdd77dd540f.mp3",
+          "artwork": "artwork/9c220404153c85b66d76.jpg",
+          "duration": 229.224
         },
         {
           "id": "c444d1fd862d68fb",
-          "title": "SURVEILLANCE",
-          "artist": "Sintetico MC · DaProd",
-          "src": "media/8306a498272b182a/c444d1fd862d68fb.mp3"
+          "title": "SinteticoMC - \"SURVEILLANCE\"",
+          "artist": "stratosphericairhorn184",
+          "src": "media/8306a498272b182a/c444d1fd862d68fb.mp3",
+          "artwork": "artwork/68a9a3941e3b529a2c1d.jpg",
+          "duration": 178.344
         }
       ]
     }

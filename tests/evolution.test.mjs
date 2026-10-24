@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readdir,readFile} from 'node:fs/promises';
+import {genome,validateGenome,random,shuffled} from '../src/evolution.js';
+const root=new URL('../src/suite-presets/',import.meta.url),presets=[];
+for(const dir of await readdir(root,{withFileTypes:true}))if(dir.isDirectory())presets.push(JSON.parse(await readFile(new URL(dir.name+'/preset.json',root),'utf8')));
+test('All eleven Suite scenes and eleven distinct new scenes are registered',()=>{assert.equal(presets.filter(p=>p.id.startsWith('daprod.')).length,11);assert.equal(presets.filter(p=>p.id.startsWith('musica.')).length,11);assert.equal(new Set(presets.map(p=>p.id)).size,22);});
+test('Evolution is reproducible after export and all mutations stay in manifest bounds',()=>{for(const p of presets)for(let seed=0;seed<100;seed++){const g=genome(p,seed);assert.deepEqual(validateGenome(JSON.parse(JSON.stringify(g)),presets),g);for(const [name,value]of Object.entries(g.parameters)){assert.ok(value>=p.parameters[name].min&&value<=p.parameters[name].max);}assert.ok(g.feedback<.6&&g.zoom>=.8&&g.zoom<=1.4);}});
+test('Shuffle visits every track once, without changing the catalog',()=>{const input=Array.from({length:47},(_,i)=>i),copy=[...input],queue=shuffled(input,random(2048));assert.deepEqual(input,copy);assert.equal(new Set(queue).size,47);assert.notDeepEqual(queue,input);assert.deepEqual(queue,shuffled(input,random(2048)));});
+test('Unknown and malformed saved universes are refused',()=>{assert.throws(()=>validateGenome({version:1,preset:'arbitrary',seed:1},presets));assert.throws(()=>validateGenome({version:1,preset:presets[0].id,seed:NaN},presets));});

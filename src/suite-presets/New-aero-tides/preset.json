@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "musica.aero-tides",
+  "name": "Mare di memoria",
+  "author": "DaProd Musica",
+  "version": "1.0.0",
+  "category": "Nuovi mondi",
+  "parameters": {
+    "speed": {
+      "type": "number",
+      "default": 1,
+      "min": 0.2,
+      "max": 2,
+      "label": "Velocità"
+    }
+  },
+  "audioMappings": []
+}

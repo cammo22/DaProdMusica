@@ -2,6 +2,7 @@
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_music::init())
         .run(tauri::generate_context!())
         .expect("Impossibile avviare DaProd Musica");
 }

@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;vec2 q=p;float water=fbm(q*3.+vec2(t*.1,-t*.2));vec3 c=mix(vec3(.015,.12,.23),vec3(.18,.85,.73),water);for(int i=0;i<6;i++){float f=float(i);vec2 z=q-vec2(sin(f*2.+t*.15)*1.2,mod(f*.43+t*.12,2.6)-1.3);float r=.1+f*.018+uBass*.07;float d=length(z);c+=vec3(.3,.8,1.)*pow(max(0.,1.-abs(d-r)*45.),3.);c+=vec3(.7,.95,1.)*glow(length(z-vec2(-r*.4,r*.4)),.007,1.3);}c+=pow(water,12.)*4.;gl_FragColor=vec4(max(c,vec3(0.)),1.);}

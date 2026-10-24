@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;vec2 q=p;float strata=sin(q.y*37.+fbm(q*2.+t*.03)*6.);float dust=step(.995,hash21(floor(q*180.)+floor(t*2.)));float signal=exp(-abs(q.y-wave(vUv.x)*(.25+uBass*.6))*75.);vec3 c=vec3(.16,.075,.035)*fbm(q*7.)+vec3(.9,.5,.18)*signal;c+=vec3(.5,.32,.15)*dust; c*=.75+.25*sin(vUv.y*700.);c+=vec3(.04,.025,.01)*strata;gl_FragColor=vec4(max(c,vec3(0.)),1.);}

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 — Universi sonori (anteprima)
+
+- Home a galassia con le immagini reali incorporate negli MP3 e accesso shuffle all'intera libreria.
+- Portali album distinti: Vesuvio nostalgico Frutiger/Y2K, Sistema high tech, DaProdSelecta archivio postnucleare.
+- Icona originale in vetro e cromo, layout mobile, safe area e controlli touch.
+- Tutti gli 11 effetti DaProdSuite, incluse le scene a particelle/corolle, e 11 nuovi effetti.
+- Evoluzione procedurale, semi riproducibili, salvataggio e import/export universi.
+- Android: player Media3 in servizio, MediaSession, focus/cuffie, checkpoint della coda e PiP nativo animato opzionale.
+- 47 brani offline. La cartella contiene due brani in più rispetto ai 45 delle precedenti release.
+- Tutti i 47 brani elaborati localmente con Whisper Small sulla RTX4060: karaoke con tempi per parola, marcato come bozza.
+- Verifiche GLSL, test, firma APK, checksum e ispezione asset/manifest. Prove fisiche Android ancora da eseguire; pillola e transizioni dipendono dal sistema.
+
+Scarica l'APK ARM64 su Android 8+ oppure l'installer Windows. È un'anteprima: segnala modello del telefono e problema osservato. Nessun aggiornamento si installa silenziosamente; l'app apre la release GitHub. Flatpak e hosting pubblico browser restano fuori da questa versione.
+
+
 ## 0.2.0 — Android e shader DaProdSuite
 
 - Cinque effetti GPU della Suite, scie e interazione touch.
@@ -20,3 +35,4 @@
 - Configurazioni di compilazione Android e Flatpak, ancora da verificare sulle rispettive piattaforme.
 
 Non inclusi: distribuzione pubblica, auto-installazione degli aggiornamenti, sincronizzazione remota dei contenuti, audio Android in background.
+

@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;vec2 q=p;q.x=abs(q.x);float wings=sin(q.x*8.+sin(q.y*6.+t))*cos(q.y*5.-t*.3);float facets=abs(fbm(q*5.+t*.08)-.5);vec3 c=mix(vec3(.03,.08,.12),vec3(.6,.85,.9),pow(facets*2.,3.));c+=vec3(.3,.1,.6)*pow(abs(wings),12.);c*=exp(-length(p)*.5);c+=vec3(.8,.9,1.)*glow(abs(q.x-.4-sin(q.y*3.+t)*.2),.006,1.1)*(uBass+.2);gl_FragColor=vec4(max(c,vec3(0.)),1.);}

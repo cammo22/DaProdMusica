@@ -609,10 +609,11 @@ checksum = "914a755b7c2d4af2bdcff7ce1739e2db9a1b81a9b07123d8015786ae03c0980d"
 
 [[package]]
 name = "daprod-musica"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "tauri",
  "tauri-build",
+ "tauri-plugin-music",
  "tauri-plugin-opener",
 ]
 
@@ -3481,6 +3482,17 @@ dependencies = [
  "serde_json",
  "tauri-utils",
  "walkdir",
+]
+
+[[package]]
+name = "tauri-plugin-music"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.21",
 ]
 
 [[package]]

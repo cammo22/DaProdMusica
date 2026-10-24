@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;vec2 q=p*3.;vec3 c=vec3(0.);for(int i=0;i<3;i++){vec2 cell=floor(q);vec2 f=fract(q)-.5;vec2 center=(hash22(cell+float(i))-.5)*.5;float d=length(f-center);float radius=.15+.08*sin(t+hash21(cell)*TAU)+uBass*.04;c+=paletteCold(hash21(cell)*.5+float(i)*.2)*exp(-abs(d-radius)*45.);q=q*1.6+vec2(t*.03,-t*.04);}c*=.6;gl_FragColor=vec4(max(c,vec3(0.)),1.);}

@@ -1,0 +1,382 @@
+{
+  "model": "small",
+  "device": "cuda",
+  "tracks": [
+    {
+      "id": "643d82de7ba99094",
+      "title": "e babba ft daprod",
+      "language": "it",
+      "lines": 31,
+      "words": 170,
+      "status": "machine-draft"
+    },
+    {
+      "id": "bab596a2661ce087",
+      "title": "Edited VER Sei una cosa grande ft modugno",
+      "language": "it",
+      "lines": 27,
+      "words": 133,
+      "status": "machine-draft"
+    },
+    {
+      "id": "5f2dcb1faa134377",
+      "title": "1 voce e 1 chitarra ft bruno martino (Remix)",
+      "language": "it",
+      "lines": 16,
+      "words": 195,
+      "status": "machine-draft"
+    },
+    {
+      "id": "e78d609da3770c51",
+      "title": "Balla balla ballerino ft lucio dalla",
+      "language": "it",
+      "lines": 28,
+      "words": 249,
+      "status": "machine-draft"
+    },
+    {
+      "id": "022a895588d8ff0c",
+      "title": "ueue che femmina ft aurelio fierro",
+      "language": "it",
+      "lines": 38,
+      "words": 175,
+      "status": "machine-draft"
+    },
+    {
+      "id": "41940826ae6373b8",
+      "title": "come ha fatto tua mamma? ft orchestra italiana (Remix)",
+      "language": "it",
+      "lines": 27,
+      "words": 227,
+      "status": "machine-draft"
+    },
+    {
+      "id": "f38840502530c3f9",
+      "title": "Fumo negli occhi ft FrancoBruno",
+      "language": "it",
+      "lines": 16,
+      "words": 132,
+      "status": "machine-draft"
+    },
+    {
+      "id": "e3d2ad60294e63fa",
+      "title": "Giacca Rossa ft Massimo Ranieri  (Remix)",
+      "language": "it",
+      "lines": 14,
+      "words": 153,
+      "status": "machine-draft"
+    },
+    {
+      "id": "3965b472f3f20251",
+      "title": "Indifferentemente",
+      "language": "it",
+      "lines": 34,
+      "words": 115,
+      "status": "machine-draft"
+    },
+    {
+      "id": "636a4553a92cbc10",
+      "title": "Infermiera di notte GianniCeleste",
+      "language": "it",
+      "lines": 29,
+      "words": 255,
+      "status": "machine-draft"
+    },
+    {
+      "id": "216d873b431179dc",
+      "title": "li per li ft aurelio fierro",
+      "language": "it",
+      "lines": 23,
+      "words": 212,
+      "status": "machine-draft"
+    },
+    {
+      "id": "61baea98baa203fd",
+      "title": "lusingami ft Sergio Bruni",
+      "language": "it",
+      "lines": 17,
+      "words": 162,
+      "status": "machine-draft"
+    },
+    {
+      "id": "1c6a45779c6e7263",
+      "title": "Ma se viene stasera ft alessio",
+      "language": "it",
+      "lines": 29,
+      "words": 310,
+      "status": "machine-draft"
+    },
+    {
+      "id": "6a51d5d5cb83c011",
+      "title": "Malafemmina ft Toto",
+      "language": "it",
+      "lines": 15,
+      "words": 178,
+      "status": "machine-draft"
+    },
+    {
+      "id": "b0798e6eb2ee05bc",
+      "title": "Malammore ft FrancoRicciardi",
+      "language": "it",
+      "lines": 48,
+      "words": 347,
+      "status": "machine-draft"
+    },
+    {
+      "id": "c7bb494f16f5e94a",
+      "title": "malinconia testo di aurelio fierro ft patrizio (Remastered)",
+      "language": "it",
+      "lines": 29,
+      "words": 141,
+      "status": "machine-draft"
+    },
+    {
+      "id": "7f6bb023d5bbe36f",
+      "title": "maliziosa ft eddy napoli",
+      "language": "it",
+      "lines": 16,
+      "words": 135,
+      "status": "machine-draft"
+    },
+    {
+      "id": "aec113e914d71bee",
+      "title": "Na Sbandata ft Patrizio",
+      "language": "it",
+      "lines": 26,
+      "words": 250,
+      "status": "machine-draft"
+    },
+    {
+      "id": "7b799a4d27da8f51",
+      "title": "Passione ft Alan sorrenti",
+      "language": "it",
+      "lines": 20,
+      "words": 161,
+      "status": "machine-draft"
+    },
+    {
+      "id": "bd24a017d3e6901a",
+      "title": "Pensaci Bene ft Roberto Murolo (Remix)",
+      "language": "it",
+      "lines": 41,
+      "words": 308,
+      "status": "machine-draft"
+    },
+    {
+      "id": "a399262428f95ecc",
+      "title": "Pensaci Bene ft Roberto Murolo",
+      "language": "it",
+      "lines": 36,
+      "words": 285,
+      "status": "machine-draft"
+    },
+    {
+      "id": "30bd03c2b5eabaa5",
+      "title": "Ragione e Sentimento Testo di Maria Nazionale (Remix)",
+      "language": "it",
+      "lines": 35,
+      "words": 268,
+      "status": "machine-draft"
+    },
+    {
+      "id": "38029c8631a60257",
+      "title": "Reginella ft libero bovio e mario abbate",
+      "language": "it",
+      "lines": 10,
+      "words": 95,
+      "status": "machine-draft"
+    },
+    {
+      "id": "1de3f84c334d2645",
+      "title": "Resta con me ft maria nazionale e Domenico Modugno",
+      "language": "it",
+      "lines": 10,
+      "words": 86,
+      "status": "machine-draft"
+    },
+    {
+      "id": "fddfa7f11bda758c",
+      "title": "Sabato notte ft Franco moreno",
+      "language": "it",
+      "lines": 19,
+      "words": 175,
+      "status": "machine-draft"
+    },
+    {
+      "id": "b8aff95e40ad8efe",
+      "title": "Soffro per te ft Corrado (Remix)",
+      "language": "it",
+      "lines": 20,
+      "words": 144,
+      "status": "machine-draft"
+    },
+    {
+      "id": "34151f14bf7803ff",
+      "title": "sono il vento ft aurelio fierro",
+      "language": "it",
+      "lines": 16,
+      "words": 156,
+      "status": "machine-draft"
+    },
+    {
+      "id": "8f4775515459053c",
+      "title": "Svegliati ft Sergio Bruni (Remix)",
+      "language": "it",
+      "lines": 11,
+      "words": 110,
+      "status": "machine-draft"
+    },
+    {
+      "id": "05abbe53ef7091d5",
+      "title": "treno ft francoricciardi",
+      "language": "it",
+      "lines": 43,
+      "words": 274,
+      "status": "machine-draft"
+    },
+    {
+      "id": "dfc2602f08e961aa",
+      "title": "NA SERA 'E MAGGIO ft SERGIO BRUNI",
+      "language": "it",
+      "lines": 4,
+      "words": 43,
+      "status": "machine-draft"
+    },
+    {
+      "id": "edac5111bca4e5d2",
+      "title": "vaffanculo con chi vuoi tu ft Squallor (Remix)",
+      "language": "it",
+      "lines": 51,
+      "words": 395,
+      "status": "machine-draft"
+    },
+    {
+      "id": "ee3ac50ad47e5fc0",
+      "title": "Vorrei Baciarti ft Teresa de sio",
+      "language": "it",
+      "lines": 11,
+      "words": 78,
+      "status": "machine-draft"
+    },
+    {
+      "id": "d36fca66c5f76951",
+      "title": "失控的心 (Remix)",
+      "language": "zh",
+      "lines": 12,
+      "words": 85,
+      "status": "machine-draft"
+    },
+    {
+      "id": "52ee6cf28636c615",
+      "title": "Babbasona",
+      "language": "it",
+      "lines": 64,
+      "words": 365,
+      "status": "machine-draft"
+    },
+    {
+      "id": "27624f32c69de340",
+      "title": "BRO, CONCENTRATI",
+      "language": "it",
+      "lines": 60,
+      "words": 480,
+      "status": "machine-draft"
+    },
+    {
+      "id": "38a028d7f1edb9ee",
+      "title": "Midnight Pulse",
+      "language": "en",
+      "lines": 8,
+      "words": 39,
+      "status": "machine-draft"
+    },
+    {
+      "id": "0f5baf93e03d961b",
+      "title": "popcorn e patati cammo",
+      "language": "it",
+      "lines": 4,
+      "words": 44,
+      "status": "machine-draft"
+    },
+    {
+      "id": "c8299455d026d41a",
+      "title": "Sintetico MC   (Remix)",
+      "language": "it",
+      "lines": 34,
+      "words": 235,
+      "status": "machine-draft"
+    },
+    {
+      "id": "d604c141e0ef7c41",
+      "title": "SinteticoMC - \"404\"",
+      "language": "it",
+      "lines": 39,
+      "words": 308,
+      "status": "machine-draft"
+    },
+    {
+      "id": "b5b925bc7cb605db",
+      "title": "SinteticoMC - \"BOOT SEQUENCE\"",
+      "language": "it",
+      "lines": 41,
+      "words": 263,
+      "status": "machine-draft"
+    },
+    {
+      "id": "c263a0fbc0d776e0",
+      "title": "SinteticoMC - \"CARNE\"",
+      "language": "it",
+      "lines": 27,
+      "words": 303,
+      "status": "machine-draft"
+    },
+    {
+      "id": "68ffa60c4bd47e0f",
+      "title": "SinteticoMC - \"DEEP FAKE\"",
+      "language": "it",
+      "lines": 38,
+      "words": 257,
+      "status": "machine-draft"
+    },
+    {
+      "id": "59bd98caaf2c197c",
+      "title": "SinteticoMC - \"ERRORE 0x00\"",
+      "language": "it",
+      "lines": 28,
+      "words": 237,
+      "status": "machine-draft"
+    },
+    {
+      "id": "56c360590de53dd5",
+      "title": "SinteticoMC - \"IL MODELLO\"",
+      "language": "it",
+      "lines": 59,
+      "words": 362,
+      "status": "machine-draft"
+    },
+    {
+      "id": "2a2d8ae3de2157b7",
+      "title": "SinteticoMC - \"LATENZA\"",
+      "language": "it",
+      "lines": 20,
+      "words": 141,
+      "status": "machine-draft"
+    },
+    {
+      "id": "bb756cdd77dd540f",
+      "title": "SinteticoMC - \"REBOOT / FINE TRASMISSIONE\"",
+      "language": "it",
+      "lines": 30,
+      "words": 244,
+      "status": "machine-draft"
+    },
+    {
+      "id": "c444d1fd862d68fb",
+      "title": "SinteticoMC - \"SURVEILLANCE\"",
+      "language": "it",
+      "lines": 29,
+      "words": 271,
+      "status": "machine-draft"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;float r=max(length(p),.025),a=atan(p.y,p.x);vec2 uv=vec2(a/TAU,1./r);float tunnel=pow(abs(sin(uv.y*3.-t*2.+sin(a*7.)*.5)),15.);float filaments=pow(abs(sin(a*16.+uv.y+t)),25.);vec3 c=paletteCold(uv.y*.03+t*.02)*(tunnel+filaments)*smoothstep(.02,.3,r);c+=vec3(.1,.8,.7)*glow(r,.03+uBass*.02,1.2);gl_FragColor=vec4(max(c,vec3(0.)),1.);}

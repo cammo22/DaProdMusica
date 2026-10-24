@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;float r=length(p),a=atan(p.y,p.x);float fire=fbm(p*4.+vec2(t*.15,0.));float disc=1.-smoothstep(.35,.42,r+fire*.08);float corona=exp(-abs(r-.42)*12.)*(.2+fire);vec3 c=paletteHot(fire*.4)*disc+vec3(1.,.3,.07)*corona*(1.+uBass);float stars=pow(hash21(floor(p*130.)),150.);c+=stars*vec3(.6,.5,.4)*(1.-disc);c*=.9+.1*sin(vUv.y*500.);gl_FragColor=vec4(max(c,vec3(0.)),1.);}

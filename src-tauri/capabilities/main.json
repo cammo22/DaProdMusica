@@ -5,6 +5,7 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "music:default",
     {"identifier":"opener:allow-open-url", "allow":[
       {"url":"https://github.com/cammo22/DaProdMusica/releases*"},
       {"url":"https://github.com/cammo22/DapGalleria/releases*"}

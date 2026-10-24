@@ -1,0 +1,3 @@
+faster-whisper==1.2.1
+av==16.1.0
+# On Windows CUDA, install nvidia-cublas-cu12 and nvidia-cudnn-cu12 alongside these.

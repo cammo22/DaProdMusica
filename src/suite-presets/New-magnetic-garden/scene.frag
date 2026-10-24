@@ -1,0 +1,2 @@
+uniform float uSpeed;
+void main(){vec2 p=centered();float t=uTime*uSpeed;float r=length(p),a=atan(p.y,p.x);float petals=abs(sin(a*(6.+floor(uSeed*3.))+sin(r*8.-t)*.5));float field=exp(-abs(r-(.35+petals*.35+uBass*.15))*25.);vec3 c=palette(a/TAU+t*.02)*field;for(int i=0;i<5;i++){float f=float(i);float ring=abs(r-(.2+f*.17+sin(a*5.+t+f)*.05));c+=paletteCold(f*.2)*exp(-ring*90.)*(.2+band(f*.18));}gl_FragColor=vec4(max(c,vec3(0.)),1.);}

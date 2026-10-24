@@ -1,106 +1,76 @@
-# DaProd Musica · 0.2.0
+# DaProd Musica 0.3.0 — Universi sonori
 
-Player immersivo per gli album DaProd. Browser, Windows e Android condividono il progetto Tauri. Pacchetti nella [pagina release](https://github.com/cammo22/DaProdMusica/releases).
+Player Android, Windows e browser con tre esperienze album, copertine estratte dagli MP3 e code in shuffle. Pacchetti nella [pagina release](https://github.com/cammo22/DaProdMusica/releases).
 
-## Prova sul PC
+## Tre mondi
 
-Apri l’installer Windows consegnato nella cartella `outputs`. Include i 45 brani importati dalle tre cartelle originali, che non sono state modificate. La build è un’anteprima non firmata con certificato Authenticode.
+- **vesuvio quantico**: nostalgia Y2K / Frutiger Aero, vetro acquatico, radio e memoria napoletana.
+- **sistema.exe**: nucleo tecnologico, griglie, metallo e segnali digitali.
+- **DaProdSelecta**: archivio riesumato secoli dopo una catastrofe, polvere, ossido e nastri recuperati.
 
-Per lavorare sui sorgenti servono Node.js 22.12+ e npm:
+La galassia mostra le copertine effettive dei brani. Toccane una per iniziare un viaggio attraverso tutti gli album, oppure entra in un portale album. Catalogo attuale: **47 brani**, di cui 46 con immagine incorporata. Il brano senza immagine usa la copertina del suo album. Le code e le liste degli album sono mescolate; non vengono mostrati numeri di traccia.
 
-```powershell
-npm ci
-npm run import:music -- "C:\Users\cammo\Desktop\dapmusica"
-npm run dev
+## Android
+
+Il player Android usa **Media3 ExoPlayer dentro un MediaSessionService**: coda, focus audio, cuffie, notifiche e posizione appartengono al servizio nativo. L'interfaccia si ricollega al player esistente quando torna visibile. I brani sono inclusi nell'APK come asset locali, senza una seconda copia dentro il frontend.
+
+Il PiP opzionale mostra copertina, nome, piccola animazione e controlli del sistema. Android 12+ usa auto-enter; Android 8–11 il callback di uscita. Si può disattivare in Impostazioni. Il comportamento della pillola e le animazioni del launcher dipendono da Android e dal produttore: l'app non può imporli. Il PiP richiede il supporto del dispositivo.
+
+**Questa è un'anteprima da provare fisicamente.** Build e ispezione dell'APK verificano codice, firma, manifest e asset, ma non certificano background, focus, PiP o fluidità su un telefono reale. Come richiesto, non viene usata automazione dell'interfaccia.
+
+## Visualizzatore
+
+Tutti gli **11 preset DaProdSuite** sono inclusi, compresi Polvere Cosmica (geometria a particelle) e Corolla Sonora (tre livelli di corolle), con shader originali e attribuzione in `THIRD_PARTY.md`. Si aggiungono **11 scene nuove**. Il motore usa spettro a 64 bande, waveform, transienti e deformazione touch.
+
+**Muta** genera parametri limitati dagli intervalli del preset; **Evolvi** cambia universo ogni 24 secondi. Un seme a 32 bit e la versione del generatore permettono di riprodurre la stessa configurazione. Puoi salvarla, esportarla e importarla. Si tratta di uno spazio di variazioni procedurali, non di nuovi shader generati da AI. Il rendering mobile limita risoluzione e frequenza; movimento ridotto e fermo sono disponibili.
+
+## Karaoke locale
+
+Tutti i 47 brani sono stati elaborati **su questo PC**, con RTX 4060 e **Systran/faster-whisper-small**, producendo frasi e tempi per parola. `public/lyrics.json` contiene i risultati; `public/lyrics-report.json` il rapporto. Sono bozze automatiche da correggere, soprattutto per dialetti, musica forte e passaggi strumentali. Il modello non è incluso nell'APK e l'audio non viene inviato a un server.
+
+Per ripetere l'elaborazione, con Python 3.12:
+
+```sh
+python -m venv .venv
+.venv/Scripts/pip install -r scripts/requirements-lyrics.txt
+# Windows GPU: aggiungere nvidia-cublas-cu12 e nvidia-cudnn-cu12
+.venv/Scripts/python scripts/transcribe-library.py --model small --device cuda
+# CPU: usare --device cpu
 ```
 
-Apri `http://127.0.0.1:5173`. In alternativa usa `AVVIA DaProd Musica.cmd` dopo aver installato le dipendenze. Per lo Studio usa `AVVIA Studio.cmd`, oppure apri `/studio.html` sullo stesso server già avviato. Mantieni una sola istanza del server.
+Il modello viene scaricato al primo avvio e rimane in `.lyrics-cache/models`. Le trascrizioni per brano sono riprendibili; gli originali non vengono modificati. Per correzioni apri `AVVIA Studio.cmd`, importa il catalogo, correggi LRC ed esporta `lyrics.json` in `public/`. Lo Studio browser mantiene anche Whisper Tiny per generazioni singole.
 
-## Cosa è implementato
-
-- Importazione delle sottocartelle come album, con ID stabili derivati dai nomi.
-- Player con pausa, seek, volume, precedente/successivo, ripetizione album, shuffle, ricerca e preferiti locali.
-- Cinque shader WebGL adattati da DaProdSuite: Tunnel al Neon, Impulso Frattale, Cromo Liquido, Griglia Retro e Inchiostro. Spettro a 64 bande, waveform, transienti, scie e deformazione touch. Licenza e provenienza in `THIRD_PARTY.md`.
-- Modalità immersiva, testi sincronizzati per frase, intensità e movimento ridotto o fermo.
-- Studio separato dal player: Whisper Tiny quantizzato in un Web Worker, editing LRC, inserimento del tempo attuale, bozze locali e import/export del catalogo testi.
-- Controllo delle release GitHub all’apertura e collegamento alle nuove versioni.
-- Promozione di DapGalleria con accesso alla sua pagina di download.
-
-I tre album importati: **vesuvio quantico** (33 brani), **DaProdSelecta** (2), **sistema.exe** (10). L’ordine iniziale è alfabetico, non una tracklist editoriale definitiva. Copertine e descrizioni sono una prima proposta grafica.
-
-## Studio e karaoke
-
-1. Apri `/studio.html` e scegli un brano.
-2. Genera la bozza con Whisper Tiny, oppure importa un LRC.
-3. Correggi ogni riga nel formato `[00:12.50]Testo`. “Inserisci tempo attuale” sincronizza la riga del cursore.
-4. Salva la bozza e fai un backup con “Esporta catalogo testi”.
-5. Copia il catalogo esportato in `public/lyrics.json`, ricompila e distribuisci la nuova versione.
-
-Il modello [Whisper Tiny ONNX](https://huggingface.co/onnx-community/whisper-tiny) viene scaricato al primo uso. L’audio viene elaborato nel dispositivo. Il cantato, i dialetti e le sovrapposizioni musicali possono produrre errori: tutte le trascrizioni sono bozze da rivedere. La generazione completa su un brano reale **non è stata ancora verificata**; la prova manuale è stata interrotta su richiesta dell’utente.
-
-Lo Studio è un editor locale, non un pannello amministrativo autenticato. Non pubblica sul server e non modifica file originali. Il player legge esclusivamente il catalogo distribuito; nessuna bozza locale viene mostrata automaticamente agli ascoltatori.
-
-## Compilazioni
-
-```powershell
-npm test
-npm run build
-npm run desktop:build
-```
-
-L’output browser è `dist/`, da servire via HTTP/HTTPS. Windows usa Tauri 2 e WebView2; l’installer è generato in `src-tauri/target/release/bundle/nsis/`.
-
-### Android
-
-La configurazione Tauri è condivisa. Con JDK 17, Android SDK/NDK e target Rust Android installati:
-
-```powershell
-npm run android:init
-npm run android:build -- --apk --target aarch64 --ci
-```
-
-Il workflow `Release Windows and Android` genera APK ARM64 release, lo firma con una chiave privata stabile custodita nei secrets GitHub e verifica firma e assenza del flag debug. Include i 45 brani per ascolto offline; richiede Android 8 o successivo. Lo Studio karaoke è escluso dall’APK. Il comportamento su telefono resta da provare: servizio audio in background e audio focus nativo sono ancora da integrare.
-
-### Linux e Flatpak
-
-Compila il binario su Linux con le dipendenze Tauri, quindi usa il manifest in `packaging/linux/flatpak.yml`:
+## Sviluppo e build
 
 ```sh
 npm ci
-npm run tauri build -- --no-bundle
-cd packaging/linux
-flatpak-builder --user --repo=repo build flatpak.yml
-flatpak build-bundle repo DaProdMusica.flatpak io.github.cammo22.daprodmusica
+node scripts/restore-media.mjs
+npm test
+npm run build
+npm run dev
 ```
 
-Serve il runtime GNOME 49 e il relativo SDK. Il workflow manuale contiene l’installazione dei prerequisiti. Il manifest segue il percorso di packaging binario descritto nella [guida Tauri Flatpak](https://v2.tauri.app/distribute/flatpak/); la compilazione Linux non è stata eseguita su questo PC Windows. La licenza del progetto e i metadati definitivi per Flathub sono da decidere.
+Il ripristino del catalogo audio richiede `gh` autenticato e verifica SHA-256. Le copertine sono versionate in `public/artwork/`; gli MP3 sono esclusi da Git. La build browser è `dist/`, da servire via HTTP/HTTPS. Lo Studio è `/studio.html`.
 
-## Distribuzione e aggiornamenti: stato reale
+Windows: `npm run desktop:build` con Rust, strumenti MSVC e WebView2. L'installer non ha certificato Authenticode.
 
-| Funzione | Stato |
-|---|---|
-| Browser locale e build statica | Implementati |
-| Installer Windows con album inclusi | Compilato localmente |
-| Android | Workflow release ARM64 con firma stabile e verifica automatica; prove fisiche da eseguire |
-| Flatpak | Manifest e workflow, non ancora compilato/verificato |
-| Avviso nuova versione | Implementato tramite GitHub Releases |
-| Installazione aggiornamenti dall’app | Da implementare con firma e gestione specifica per piattaforma |
-| Catalogo remoto e sincronizzazione testi | Da collegare a hosting/versionamento dei contenuti |
-| Sito pubblico/PWA offline | Non ancora pubblicato; cache offline non implementata |
+Android con JDK17, SDK/NDK e Rust aarch64:
 
-Gli aggiornamenti firmati desktop possono usare il [plugin updater Tauri](https://v2.tauri.app/plugin/updater/). Android richiede un percorso specifico verso l’installer di sistema; Flatpak va aggiornato tramite il suo repository. Non sono attivi aggiornamenti automatici silenziosi.
+```sh
+npm run android:init -- --ci
+node scripts/configure-android.mjs
+npm run android:build -- --apk --target aarch64 --ci
+```
 
-Le canzoni in `public/media/` sono escluse da Git. Il workflow release ripristina il bundle audio indicato in `media-bundle.json`, controllandone SHA-256 prima di compilarlo nei pacchetti. Con `gh` autenticato si può ripristinarlo localmente con `node scripts/restore-media.mjs`.
+Il workflow `Release Windows and Android` ripristina il bundle audio, verifica shader e test, compila i due pacchetti, firma Android con la chiave privata stabile nei secrets e prepara una release bozza. L'ispezione APK controlla tutti i file audio, copertine, servizio multimediale e PiP. Le chiavi non sono pubblicate.
 
-## Architettura e verifiche
+Flatpak ha ancora soltanto il manifest in `packaging/linux`; non è incluso in questa release. Il sito pubblico non è ancora ospitato. Gli aggiornamenti aprono la pagina GitHub: l'installazione interna non è ancora implementata.
 
-- `src/main.js`: interfaccia del player e Web Audio.
-- `src/playback.js`: gestione concorrente delle richieste di riproduzione e navigazione.
-- `src/gpu-visualizer.js` / `src/suite-presets/`: renderer WebGL e shader DaProdSuite; fallback Canvas sui dispositivi senza WebGL.
-- `src/audio-features.js`: analisi audio e texture per gli shader.
-- `src/studio.js` / `src/transcribe.worker.js`: editor e inferenza separata dal thread dell’interfaccia.
-- `src/core.js`: LRC, catalogo testi, confronto versioni.
-- `scripts/import-music.mjs`: copia locale non distruttiva degli album.
-- `tests/`: test automatici di LRC, stato playback, preferenze e integrità dei file importati.
+## Verifiche
 
-Le prove UI sono lasciate all’utente. Build e test automatici non certificano qualità del riconoscimento vocale, rendering o comportamento sui dispositivi Android/Linux.
+- Test di shuffle senza duplicati, evoluzione deterministica e limiti dei parametri.
+- Validazione GLSL delle 22 scene, incluse coppie vertex/fragment delle geometrie.
+- Integrità di catalogo, immagini e timestamp dei testi.
+- Build web, controllo Rust e build native nel workflow.
+
+Il brief creativo normalizzato è in `docs/CREATIVE_DIRECTION.md`; l'architettura Android in `docs/ANDROID.md`.
