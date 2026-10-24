@@ -44,6 +44,9 @@ class PlaybackService:MediaSessionService(){
    private var samples=FloatArray(2048);private var cursor=0
    override fun onConfigure(input:AudioProcessor.AudioFormat):AudioProcessor.AudioFormat {cursor=0;pending.set(null);rate=input.sampleRate;return if(input.encoding==C.ENCODING_PCM_16BIT)input else AudioProcessor.AudioFormat.NOT_SET}
    override fun queueInput(input:ByteBuffer){
+    // Media3 also queues empty buffers while draining. Replacing our output
+    // buffer then would clear and copy the same recycled buffer into itself.
+    if(!input.hasRemaining())return
     val copy=input.duplicate().order(ByteOrder.LITTLE_ENDIAN)
     val channels=inputAudioFormat.channelCount
     if(analysisEnabled)while(copy.remaining()>=channels*2){var sample=0f;repeat(channels){sample+=copy.short/32768f};samples[cursor++]=sample/channels;if(cursor==samples.size){pending.set(samples);samples=FloatArray(2048);cursor=0}}else cursor=0
@@ -62,7 +65,7 @@ class PlaybackService:MediaSessionService(){
   session=MediaSession.Builder(this,player).setSessionActivity(intent).build()
   player.addListener(object:Player.Listener{
    override fun onEvents(p:Player,events:Player.Events){persist();MusicPlugin.active?.refreshPip()}
-   override fun onPlayerError(e:PlaybackException){error=e.message}
+   override fun onPlayerError(e:PlaybackException){error=generateSequence(e as Throwable?){it.cause}.joinToString("\n"){"${it.javaClass.simpleName}: ${it.message}"};android.util.Log.e("DaProdPlayback","Playback failed",e)}
   })
   val saved=getSharedPreferences("dap-playback",MODE_PRIVATE)
   try{val raw=saved.getString("queue",null);val index=saved.getInt("index",0);val position=saved.getLong("position",0);if(raw!=null)setQueue(JSONArray(raw),index,false,position)}catch(_:Exception){}
