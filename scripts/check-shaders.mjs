@@ -13,7 +13,7 @@ for(const dir of await readdir(root,{withFileTypes:true})){
   const meshVertex=(await readdir(root+'/'+dir.name)).find(f=>f.endsWith('.vert'));
   let vertex=vert;
   if(meshVertex){vertex=join(out,dir.name+'.vert');await writeFile(vertex,'attribute vec3 position;uniform mat4 projectionMatrix;uniform mat4 modelViewMatrix;\n'+await readFile(root+'/'+dir.name+'/'+meshVertex,'utf8'));await writeFile(fragment,source);}
-  else await writeFile(fragment,composeShader(common,source));
+  else await writeFile(fragment,composeShader(common,source,JSON.parse(await readFile(root+'/'+dir.name+'/preset.json','utf8')).id));
   execFileSync(process.env.GLSLANG || 'glslangValidator',['-l',vertex,fragment],{stdio:'inherit'});
  }
 }

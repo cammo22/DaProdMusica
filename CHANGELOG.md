@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.0 — Player Android corretto e UI semplificata
+
+- Risolto `Unexpected runtime error` durante la riproduzione: guardia sui buffer PCM vuoti. Il test Android riproduceva il guasto prima della correzione.
+- Pagine separate Galassia / Album / Preferiti, senza slogan o testi duplicati.
+- Galassia sferica ruotabile con le copertine reali.
+- Player compatto espandibile con tap o trascinamento, titolo solo in alto nell'espanso.
+- Pulsante Effetti: tap casuale, pressione lunga per attivare/disattivare l'automatico.
+- Interazioni differenziate per gli effetti, colori delle copertine e preset iniziali legati ai brani.
+- Icone native Android copiate esplicitamente nel packaging.
+- 47 brani offline e bozze karaoke locali con tempi per parola.
+
+La build APK richiede il superamento del test Android di riproduzione, background e PiP; controlla anche firma, manifest e librerie native a 16KB. Le prove automatiche su emulatore non certificano comportamento del launcher o prestazioni di ogni telefono.
+
+
 ## 0.3.0 — Universi sonori (anteprima)
 
 - Home a galassia con le immagini reali incorporate negli MP3 e accesso shuffle all'intera libreria.
@@ -35,4 +49,5 @@ Scarica l'APK ARM64 su Android 8+ oppure l'installer Windows. È un'anteprima: s
 - Configurazioni di compilazione Android e Flatpak, ancora da verificare sulle rispettive piattaforme.
 
 Non inclusi: distribuzione pubblica, auto-installazione degli aggiornamenti, sincronizzazione remota dei contenuti, audio Android in background.
+
 

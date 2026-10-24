@@ -4,6 +4,7 @@ const root='src-tauri/gen/android/app/src/main';
 const manifest=root+'/AndroidManifest.xml';let xml=await readFile(manifest,'utf8');
 if(!xml.includes('android:supportsPictureInPicture'))xml=xml.replace(/<activity\s/,'<activity android:supportsPictureInPicture="true" android:resizeableActivity="true" ');
 await writeFile(manifest,xml);
+await cp('src-tauri/icons/android',root+'/res',{recursive:true});
 const gradle='src-tauri/gen/android/app/build.gradle.kts';let build=await readFile(gradle,'utf8');if(!build.includes('DaProd native audio'))build+='\n// DaProd native audio: allow efficient seeking without decompressing songs.\nandroid { androidResources { noCompress += listOf("mp3", "flac", "wav", "ogg", "m4a") } }\n';await writeFile(gradle,build);
 async function find(dir){for(const entry of await readdir(dir,{withFileTypes:true})){const path=join(dir,entry.name);if(entry.isDirectory())await find(path);else if(entry.name==='MainActivity.kt'){
  const source=await readFile(path,'utf8'),pkg=source.match(/package\s+([\w.]+)/)[1];

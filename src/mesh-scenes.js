@@ -12,12 +12,13 @@ export function meshScene(gl,id,mobile){
 }
 function perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0]);}
 function view(eye){const normalize=a=>{const n=Math.hypot(...a);return a.map(x=>x/n);},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],z=normalize(eye),x=normalize(cross([0,1,0],z)),y=cross(z,x),dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]);}
-export function drawMesh(gl,scene,time,aspect,pointer,height){
+export function drawMesh(gl,scene,time,aspect,pointer,height,press=0){
  const u=scene.uniforms,m=scene.mesh;
  for(const [name,{b,size}]of Object.entries(m.geometry)){const a=gl.getAttribLocation(scene.p,name);if(a<0)continue;gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,size,gl.FLOAT,false,0,0);}
  gl.clearColor(.005,.008,.025,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
- if(m.isDust){const orbit=time*.035+pointer[0]*.5,eye=[Math.sin(orbit)*12,5+pointer[1]*4,Math.cos(orbit)*12];gl.uniformMatrix4fv(u.projectionMatrix,false,perspective(58*Math.PI/180,aspect,.1,220));gl.uniformMatrix4fv(u.modelViewMatrix,false,view(eye));gl.uniform1f(u.uHeightScale,Math.min(1.5,height/800));gl.drawArrays(gl.POINTS,0,m.count);
- }else{const scale=aspect<1?aspect:1;gl.uniformMatrix4fv(u.projectionMatrix,false,new Float32Array([scale/aspect,0,0,0,0,scale,0,0,0,0,-1,0,0,0,0,1]));for(let i=0;i<3;i++){const s=1-i*.14;gl.uniform1f(u.uLayer,i);gl.uniformMatrix4fv(u.modelViewMatrix,false,new Float32Array([s,0,0,0,0,s,0,0,0,0,1,0,pointer[0]*.2,pointer[1]*.2,0,1]));gl.drawArrays(gl.TRIANGLES,0,m.count);}}
+ if(m.isDust){if(press){gl.uniform1f(u.uBurst,press*4.);gl.uniform1f(u.uSpread,scene.manifest.parameters.spread.default+Math.abs(pointer[0])*2.);}const orbit=time*.035+pointer[0]*.5,eye=[Math.sin(orbit)*12,5+pointer[1]*4,Math.cos(orbit)*12];gl.uniformMatrix4fv(u.projectionMatrix,false,perspective(58*Math.PI/180,aspect,.1,220));gl.uniformMatrix4fv(u.modelViewMatrix,false,view(eye));gl.uniform1f(u.uHeightScale,Math.min(1.5,height/800));gl.drawArrays(gl.POINTS,0,m.count);
+ }else{if(press){gl.uniform1f(u.uPetals,scene.manifest.parameters.petals.default+pointer[0]*12.);gl.uniform1f(u.uAmount,scene.manifest.parameters.amount.default*(1.+press*1.5));gl.uniform1f(u.uBloomPulse,press);}const scale=aspect<1?aspect:1;gl.uniformMatrix4fv(u.projectionMatrix,false,new Float32Array([scale/aspect,0,0,0,0,scale,0,0,0,0,-1,0,0,0,0,1]));for(let i=0;i<3;i++){const s=1-i*.14;gl.uniform1f(u.uLayer,i);gl.uniformMatrix4fv(u.modelViewMatrix,false,new Float32Array([s,0,0,0,0,s,0,0,0,0,1,0,pointer[0]*.2,pointer[1]*.2,0,1]));gl.drawArrays(gl.TRIANGLES,0,m.count);}}
  gl.disable(gl.BLEND);
  for(const name of Object.keys(m.geometry)){const a=gl.getAttribLocation(scene.p,name);if(a>=0)gl.disableVertexAttribArray(a);}
 }
+

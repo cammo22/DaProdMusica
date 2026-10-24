@@ -31,7 +31,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
  @Command fun execute(invoke:Invoke){
   try{
    val args=invoke.parseArgs(ExecuteArgs::class.java)
-   if(args.op=="pip"){pip.setEnabled(args.enabled);invoke.resolve(JSObject().apply{put("supported",pip.supported());put("enabled",pip.enabled)});return}
+   if(args.op=="pip"){pip.updateEnabled(args.enabled);invoke.resolve(JSObject().apply{put("supported",pip.supported());put("enabled",pip.enabled)});return}
    if(args.op=="enterPip"){if(pip.enter())invoke.resolve()else invoke.reject("PiP non disponibile: verifica il permesso nelle impostazioni Android.");return}
    if(PlaybackService.instance==null){activity.startService(Intent(activity,PlaybackService::class.java));waitService(invoke,args,0)}else perform(invoke,args)
   }catch(error:Exception){invoke.reject(error.message?:"Comando audio non valido")}
@@ -55,3 +55,4 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
   val state=service.snapshot();if(args.op!="init"&&args.op!="queue")state.remove("queue");state.put("pipSupported",pip.supported());state.put("pipEnabled",pip.enabled);invoke.resolve(JSObject(state.toString()))
  }catch(error:Exception){invoke.reject(error.message?:"Errore player")}}
 }
+

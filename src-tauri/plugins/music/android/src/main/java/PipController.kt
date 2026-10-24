@@ -17,7 +17,7 @@ class PipController(private val activity:Activity,private val analysisRequested:
  var enabled=activity.getPreferences(0).getBoolean("pip",true)
  private var mini:MiniView?=null
  fun supported()=activity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
- fun setEnabled(value:Boolean){enabled=value;activity.getPreferences(0).edit().putBoolean("pip",value).apply();refresh()}
+ fun updateEnabled(value:Boolean){enabled=value;activity.getPreferences(0).edit().putBoolean("pip",value).apply();refresh()}
  private fun params():PictureInPictureParams{
   val playing=PlaybackService.instance?.player?.isPlaying==true
   fun action(op:String,label:String,icon:Int,code:Int):RemoteAction{val intent=Intent(activity,PlaybackActionReceiver::class.java).setAction(op);return RemoteAction(Icon.createWithResource(activity,icon),label,label,PendingIntent.getBroadcast(activity,code,intent,PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))}
@@ -57,3 +57,4 @@ class MiniView(context:Context):View(context){
  }
  override fun onDetachedFromWindow(){artwork?.recycle();artwork=null;super.onDetachedFromWindow()}
 }
+

@@ -15,12 +15,12 @@ export class Visualizer {
   constructor(canvas,readAudio,onError=()=>{}) {
     this.canvas=canvas;this.readAudio=readAudio;this.onError=onError;
     this.mode='Magma';this.intensity=.65;this.enabled=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.genome=null;this.auto=false;this.evolveAt=0;this.transition=0;this.onEvolution=()=>{};
-    this.quality=matchMedia('(pointer:coarse)').matches?.65:1;this.time=0;this.last=0;this.pointer=[0,0];this.press=0;this.programs=new Map();this.targets=[];this.front=0;this.values={};
+    this.quality=matchMedia('(pointer:coarse)').matches?.65:1;this.time=0;this.last=0;this.pointer=[0,0];this.origin=[0,0];this.touchAt=-100000;this.flight=0;this.tint=[.7,.9,.85];this.press=0;this.programs=new Map();this.targets=[];this.front=0;this.values={};
     this.gl=canvas.getContext('webgl',{alpha:false,antialias:false,powerPreference:'low-power'});
     if(!this.gl){setTimeout(()=>onError('WebGL non disponibile: visualizzazione semplificata attiva.'),0);return new FallbackVisualizer(canvas,readAudio);}
     this.init();
     canvas.addEventListener('pointermove',e=>this.move(e));
-    canvas.addEventListener('pointerdown',e=>{this.move(e);this.press=1;canvas.setPointerCapture(e.pointerId);});
+    canvas.addEventListener('pointerdown',e=>{this.move(e);this.origin=[...this.pointer];this.touchAt=performance.now();this.press=1;canvas.setPointerCapture(e.pointerId);});
     for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,()=>this.press=0);
     canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.lost=true;});
     canvas.addEventListener('webglcontextrestored',()=>{this.programs.clear();this.targets=[];this.init();this.size();this.lost=false;});
@@ -36,22 +36,27 @@ export class Visualizer {
   size(){const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;const scale=Math.min(devicePixelRatio||1,1.5)*this.quality,cap=Math.min(1,1200/(r.width*scale));const width=Math.max(1,Math.round(r.width*scale*cap)),height=Math.max(1,Math.round(r.height*scale*cap));if(this.canvas.width===width&&this.canvas.height===height&&this.targets.length)return;this.canvas.width=width;this.canvas.height=height;const gl=this.gl;for(const target of this.targets){gl.deleteTexture(target.t);gl.deleteFramebuffer(target.f);}this.targets=[0,1].map(()=>{const t=this.texture(width,height),f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('Framebuffer non disponibile');gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);return {t,f};});gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
   bind(program){const gl=this.gl;gl.useProgram(program.p);gl.bindBuffer(gl.ARRAY_BUFFER,this.buffer);const a=gl.getAttribLocation(program.p,'position');if(a>=0){gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);}}
   scene(){const id=aliases[this.mode]||this.mode,entry=PRESETS.find(p=>p.manifest.id===id)||PRESETS[0];if(!this.programs.has(id)){
-    const mesh=meshScene(this.gl,id,this.quality<1);const fragment=mesh?entry.body:composeShader(common,entry.body);
+    const mesh=meshScene(this.gl,id,this.quality<1);const fragment=mesh?entry.body:composeShader(common,entry.body,id);
     this.programs.set(id,{...this.program(fragment,mesh?.vertex||vertex),manifest:entry.manifest,mesh});
   }return this.programs.get(id);}
   frame(now){requestAnimationFrame(this.frame);if(this.lost||document.hidden||!this.enabled||!this.targets.length||now-this.last<(this.reduced?100:33))return;const dt=Math.min(.1,(now-this.last)/1000);this.last=now;this.time+=dt*(this.reduced?.15:1);try{const gl=this.gl,scene=this.scene(),u=scene.uniforms,a=this.readAudio();this.bind(scene);const set=(name,value)=>{if(u[name]!=null)gl.uniform1f(u[name],value);};
-    if(this.auto&&this.time>this.evolveAt)this.evolve();
+    if(this.auto&&this.time>this.evolveAt){const choices=PRESETS.filter(p=>p.manifest.id!==this.mode);this.mode=choices[seedNumber()%choices.length].manifest.id;this.genome=null;this.transition=1;this.evolveAt=this.time+18;}
     const genes=this.genome?.preset===scene.manifest.id?this.genome:null;
     for(const [name,parameter]of Object.entries(scene.manifest.parameters))set(uniformName(name),genes?.parameters[name]??parameter.default);
     for(const name of ['bass','mid','treble','rms','peak','beat','onset','centroid','energy','beatCount'])set(uniformName(name),(a[name]||0)*(this.reduced&&['beat','onset'].includes(name)?0:1));
     for(const mapping of scene.manifest.audioMappings){const key=scene.manifest.id+mapping.target,old=this.values[key]||0,value=(a[mapping.source]||0)*mapping.amount;this.values[key]=old+(value-old)*(1-Math.exp(-dt/Math.max(.001,mapping.smoothing)));set(uniformName(mapping.target),this.reduced&&['beat','onset'].includes(mapping.source)?0:this.values[key]);}
     this.transition=Math.max(0,this.transition-dt*.5);set('uSeed',(genes?.seed||0)%65536/65536);set('uEvolutionHue',genes?.hue||0);set('uEvolutionKaleido',genes?.kaleido||0);set('uEvolutionZoom',genes?.zoom||1);set('uEvolutionWarp',genes?.warp||0);
-    set('uTime',this.time);set('uDelta',dt);set('uIntensity',.5+this.intensity*.8);set('uAspect',this.canvas.width/this.canvas.height);set('uPosition',a.position||0);set('uTouch',this.press);set('uFeedback',this.reduced?0:Math.min(.94,(genes?.feedback||.28)+this.transition*.6));
+    if(['daprod.neon-tunnel','musica.wormhole-orchestra'].includes(scene.manifest.id))this.flight+=dt*this.press*2;
+    if(this.press&&scene.manifest.id==='daprod.electric-storm')set('uStrike',1);
+    if(this.press&&scene.manifest.id==='daprod.napoli-lava')set('uEruption',.8);
+    set('uTime',this.time+this.flight);set('uDelta',dt);set('uIntensity',.5+this.intensity*.8);set('uAspect',this.canvas.width/this.canvas.height);set('uPosition',a.position||0);set('uTouch',this.press);set('uTouchAge',Math.min(100,(now-this.touchAt)/1000));set('uFeedback',this.reduced?0:Math.min(.94,(genes?.feedback||.28)+this.transition*.6));
+    if(u.uTouchOrigin!=null)gl.uniform2f(u.uTouchOrigin,...this.origin);if(u.uTrackTint!=null)gl.uniform3f(u.uTrackTint,...this.tint);
     if(u.uResolution!=null)gl.uniform2f(u.uResolution,this.canvas.width,this.canvas.height);if(u.uPointer!=null)gl.uniform2f(u.uPointer,...this.pointer);
     for(const [unit,name,texture,pixels,width]of [[0,'uSpectrum',this.spectrum,a.spectrum,64],[1,'uWave',this.wave,a.wave,256],[2,'uPrevious',this.targets[this.front].t,null,0]]){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,texture);if(pixels)gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,width,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);if(u[name]!=null)gl.uniform1i(u[name],unit);}
-    const target=this.targets[1-this.front];gl.bindFramebuffer(gl.FRAMEBUFFER,target.f);gl.viewport(0,0,this.canvas.width,this.canvas.height);if(scene.mesh)drawMesh(gl,scene,this.time,this.canvas.width/this.canvas.height,this.pointer,this.canvas.height);else gl.drawArrays(gl.TRIANGLES,0,6);gl.bindFramebuffer(gl.FRAMEBUFFER,null);this.bind(this.blit);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,target.t);gl.uniform1i(this.blit.uniforms.image,0);gl.drawArrays(gl.TRIANGLES,0,6);this.front=1-this.front;
-  }catch(error){this.enabled=false;this.onError('Il dispositivo non riesce ad avviare questo effetto. Prova un altro ambiente.');console.error(error);}}
+    const target=this.targets[1-this.front];gl.bindFramebuffer(gl.FRAMEBUFFER,target.f);gl.viewport(0,0,this.canvas.width,this.canvas.height);if(scene.mesh)drawMesh(gl,scene,this.time,this.canvas.width/this.canvas.height,this.pointer,this.canvas.height,this.press);else gl.drawArrays(gl.TRIANGLES,0,6);gl.bindFramebuffer(gl.FRAMEBUFFER,null);this.bind(this.blit);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,target.t);gl.uniform1i(this.blit.uniforms.image,0);gl.drawArrays(gl.TRIANGLES,0,6);this.front=1-this.front;
+  }catch(error){this.enabled=false;this.onError('Il dispositivo non riesce ad avviare questo effetto. Prova a cambiare effetto.');console.error(error);}}
 }
+
 
 
 

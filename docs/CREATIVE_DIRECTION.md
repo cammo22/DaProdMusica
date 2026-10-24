@@ -1,19 +1,12 @@
-# Direzione creativa / brief migliorato
+# UI 0.4.0
 
-Creare un archivio musicale da esplorare, in cui le immagini incorporate nei brani diventano pianeti. L'interfaccia accompagna la scelta e poi lascia spazio a musica e immagini. Progettare prima per una mano sul telefono, con controlli grandi, testo leggibile, safe area e PiP sobrio.
+Direzione aggiornata dopo la prova Android: interfaccia semplice da player musicale. Niente slogan, nomi metaforici dei controlli o testo ripetuto.
 
-**Linguaggio comune:** vetro traslucido, cromo argentato, riflessi acquatici, orbite sottili e controlli compatti. Usare le copertine originali, mai sostituirle con segnaposto decorativi. Il simbolo dell'app è un pianeta di vetro verde acqua, anello cromato e tre barre musicali; sorgente vettoriale in public/icon.svg.
+- Navigazione inferiore: Galassia / Album / Preferiti.
+- Galassia: soltanto la sfera delle copertine, ruotabile con il dito. Una copertina avvia il brano in una coda shuffle globale.
+- Album: copertina, titolo e brani in ordine mescolato. L'album selezionato determina fondo e palette; il brano determina anche il primo effetto.
+- Player compatto: copertina, titolo, play e successivo. Tap o swipe verso l'alto apre l'espanso.
+- Player espanso: un solo titolo in alto, effetto a pieno schermo, seek e trasporto in basso. Trascinamento verso il basso per ridurre.
+- Effetti: un solo controllo. Tap cambia, pressione lunga commuta l'automatico. Le azioni touch sono specifiche per gli effetti.
 
-| Album | Immaginario | Trattamento |
-|---|---|---|
-| vesuvio quantico | Ricordo di un futuro immaginato nel 2000, voci napoletane riemerse dall'acqua | Azzurro, menta, vetro luminoso, caratteri morbidi, orbite e mare |
-| sistema.exe | Un nucleo digitale che si accorge dell'ascoltatore | Blu elettrico, geometrie tecniche, monospace, griglie e metallo |
-| DaProdSelecta | Nastri sepolti dopo una guerra atomica e recuperati nel 2476 | Terra, rame, ossido, polvere, memoria archeologica e segnale instabile |
-
-**Interazione:** tutte le canzoni attraversabili dalla galassia; un album è un portale verso il proprio mondo; code e liste mescolate senza numeri ordinali. Il tocco deforma gli effetti. Le mutazioni devono essere riproducibili e salvabili. Includere ogni effetto della Suite e altrettante scene realmente distinte.
-
-**Responsabilità del sistema:** la coda Android e la continuità sonora appartengono al servizio nativo, l'interfaccia si ricollega. Le animazioni del launcher e la pillola restano di competenza del telefono. Il mini player PiP usa il supporto standard e si può spegnere.
-
-**Karaoke:** elaborare localmente i file, conservare tracce di provenienza e tempi per parola; distinguere sempre le bozze automatiche dai testi revisionati. Correggere nello Studio e ridistribuire il catalogo.
-
-Il confronto con MilkDrop è una direzione di sviluppo: questa versione è il primo motore procedurale, non una dichiarazione di equivalenza funzionale. Nessuna compatibilità con file .milk è dichiarata.
+Le identità degli album restano nel colore e nel trattamento visivo: memoria acquatica per Vesuvio, digitale per Sistema, toni terra per DaProdSelecta. Le copertine sono quelle effettive degli MP3.

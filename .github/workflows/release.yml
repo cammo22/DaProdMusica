@@ -7,6 +7,8 @@ concurrency:
   group: release
   cancel-in-progress: false
 jobs:
+  runtime:
+    uses: ./.github/workflows/android-smoke.yml
   verify:
     runs-on: ubuntu-24.04
     outputs:
@@ -28,7 +30,7 @@ jobs:
         run: |
           node -e "const p=require('./package.json'), t=require('./src-tauri/tauri.conf.json');if(p.version!==t.version)process.exit(1);console.log('value='+p.version)" >> "$GITHUB_OUTPUT"
   android:
-    needs: verify
+    needs: [verify,runtime]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -132,6 +134,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
+          pattern: '*-release'
           path: release-artifacts
           merge-multiple: true
       - env:
@@ -140,10 +143,10 @@ jobs:
         run: |
           status=$(gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null || true)
           if [ "$status" = true ]; then
-            gh release edit "v$VERSION" --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Universi sonori" --notes-file "releases/$VERSION.md"
+            gh release edit "v$VERSION" --target "$GITHUB_SHA" --title "DaProd Musica $VERSION" --notes-file "releases/$VERSION.md"
             gh release upload "v$VERSION" release-artifacts/* --clobber
           elif [ -z "$status" ]; then
-            gh release create "v$VERSION" release-artifacts/* --draft --target "$GITHUB_SHA" --title "DaProd Musica $VERSION — Universi sonori" --notes-file "releases/$VERSION.md"
+            gh release create "v$VERSION" release-artifacts/* --draft --target "$GITHUB_SHA" --title "DaProd Musica $VERSION" --notes-file "releases/$VERSION.md"
           else
             echo 'Refusing to overwrite a published release.' >&2
             exit 1
