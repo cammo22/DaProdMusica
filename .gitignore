@@ -11,6 +11,10 @@ public/media/
 .env*
 .media-cache/
 .lyrics-cache/
+native-smoke/.gradle/
+native-smoke/app/build/
+native-smoke/app/src/main/assets/
+native-smoke/app/src/main/java/io/github/cammo22/smoke/PlaybackService.kt
 release-artifacts/
 *.p12
 *.pem
