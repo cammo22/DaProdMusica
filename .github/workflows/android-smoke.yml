@@ -27,6 +27,8 @@ jobs:
       - run: node scripts/restore-media.mjs
         env:
           GH_TOKEN: ${{ github.token }}
+      - run: npm ci
+      - run: npm run build:player
       - run: node scripts/prepare-smoke.mjs
       - run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -38,7 +40,7 @@ jobs:
           target: google_apis
           arch: x86_64
           disable-animations: true
-          script: gradle -p native-smoke connectedDebugAndroidTest --stacktrace
+          script: bash -c 'gradle -p native-smoke connectedDebugAndroidTest --stacktrace; result=$?; adb pull /sdcard/Android/data/io.github.cammo22.smoke/files/effect-previews native-smoke/effect-previews || true; exit "$result"'
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -46,3 +48,4 @@ jobs:
           path: |
             native-smoke/app/build/reports/androidTests/
             native-smoke/app/build/outputs/androidTest-results/
+            native-smoke/effect-previews/

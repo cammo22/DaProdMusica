@@ -6,6 +6,7 @@
  <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
  <application android:theme="@android:style/Theme.Material.NoActionBar" android:label="DaProd playback test">
   <activity android:name="io.github.cammo22.smoke.SmokeActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity>
+  <activity android:name="io.github.cammo22.smoke.PlayerSmokeActivity" android:exported="false" android:hardwareAccelerated="true"/>
   <service android:name="io.github.cammo22.music.PlaybackService" android:foregroundServiceType="mediaPlayback" android:exported="true"><intent-filter><action android:name="androidx.media3.session.MediaSessionService"/></intent-filter></service>
   <receiver android:name="androidx.media3.session.MediaButtonReceiver" android:exported="true"><intent-filter><action android:name="android.intent.action.MEDIA_BUTTON"/></intent-filter></receiver>
   <receiver android:name="io.github.cammo22.music.PlaybackWidget" android:exported="false">

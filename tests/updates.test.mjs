@@ -1,5 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {releaseForUpdates,androidAsset} from '../src/updates.js';
-test('Updates open the actual newest preview rather than redirecting to an older stable release',()=>{const release=(tag,extra={})=>({tag_name:tag,html_url:`https://github.com/cammo22/DaProdMusica/releases/tag/${tag}`,draft:false,...extra});const preview=release('v0.3.0',{prerelease:true});assert.equal(releaseForUpdates([release('v0.2.0'),preview,release('v0.4.0',{draft:true}),release('v9.0.0',{html_url:'https://example.com'})]),preview);assert.equal(releaseForUpdates(null),null);});
+test('Updates choose the newest published stable release and never drafts or prereleases',()=>{
+ const release=(tag,extra={})=>({tag_name:tag,html_url:`https://github.com/cammo22/DaProdMusica/releases/tag/${tag}`,draft:false,...extra});
+ const stable=release('v0.5.0');
+ assert.equal(releaseForUpdates([release('v0.4.0'),release('v0.6.0',{prerelease:true}),stable,release('v0.7.0',{draft:true}),release('v9.0.0',{html_url:'https://example.com'})]),stable);
+ assert.equal(releaseForUpdates([release('v0.6.0',{prerelease:true}),release('v0.7.0',{draft:true})]),null);
+ assert.equal(releaseForUpdates(null),null);
+});
 
 test('Android updates select only the matching release APK with a complete SHA-256 digest',()=>{
  const tag='v0.5.0',name='DaProdMusica-0.5.0-Android-arm64.apk';

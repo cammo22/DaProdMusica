@@ -1,6 +1,6 @@
 [package]
 name = "daprod-musica"
-version = "0.5.0"
+version = "0.6.0"
 description = "DaProd Musica — immersive album player"
 authors = ["DaProd"]
 edition = "2021"

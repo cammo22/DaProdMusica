@@ -36,6 +36,13 @@ class PlaybackService:MediaSessionService(){
  private var beatAverage=0.0
  private var lastBeat=0L
  private var beatCount=0
+ private val fftReal=DoubleArray(2048)
+ private val fftImag=DoubleArray(2048)
+ private val fftWindow=DoubleArray(2048){.5-.5*cos(2*PI*it/2047)}
+ private val fftCos=DoubleArray(1024){cos(-2*PI*it/2048)}
+ private val fftSin=DoubleArray(1024){sin(-2*PI*it/2048)}
+ private val bandLevels=DoubleArray(64)
+ private val bandAverage=DoubleArray(3){.1}
  private val main=android.os.Handler(android.os.Looper.getMainLooper())
  private val checkpoint=object:Runnable{override fun run(){if(::player.isInitialized&&player.isPlaying)persist();main.postDelayed(this,10000)}}
  override fun onCreate(){
@@ -49,7 +56,7 @@ class PlaybackService:MediaSessionService(){
     if(!input.hasRemaining())return
     val copy=input.duplicate().order(ByteOrder.LITTLE_ENDIAN)
     val channels=inputAudioFormat.channelCount
-    if(analysisEnabled)while(copy.remaining()>=channels*2){var sample=0f;repeat(channels){sample+=copy.short/32768f};samples[cursor++]=sample/channels;if(cursor==samples.size){pending.set(samples);samples=FloatArray(2048);cursor=0}}else cursor=0
+    if(analysisEnabled)while(copy.remaining()>=channels*2){var sample=0f;repeat(channels){sample+=copy.short/32768f};samples[cursor++]=sample/channels;if(cursor==samples.size){pending.set(samples.copyOf());System.arraycopy(samples,1024,samples,0,1024);cursor=1024}}else cursor=0
     val output=replaceOutputBuffer(input.remaining());output.put(input);output.flip()
    }
    override fun onFlush(){cursor=0;pending.set(null)}
@@ -76,7 +83,7 @@ class PlaybackService:MediaSessionService(){
   val saved=getSharedPreferences("dap-playback",MODE_PRIVATE)
   try{val raw=saved.getString("queue",null);val index=saved.getInt("index",0);val position=saved.getLong("position",0);if(raw!=null)setQueue(JSONArray(raw),index,false,position)}catch(_:Exception){}
   ensureQueue()
-  worker.scheduleAtFixedRate({val frame=pending.getAndSet(null);if(analysisEnabled&&frame!=null)analyse(frame)},0,50,TimeUnit.MILLISECONDS)
+  worker.scheduleAtFixedRate({val frame=pending.getAndSet(null);if(analysisEnabled&&frame!=null)analyse(frame)},0,24,TimeUnit.MILLISECONDS)
   main.postDelayed(checkpoint,10000)
  }
  fun ensureQueue(){
@@ -106,19 +113,25 @@ class PlaybackService:MediaSessionService(){
  private fun persist(){if(!::player.isInitialized)return;getSharedPreferences("dap-playback",MODE_PRIVATE).edit().putString("queue",rows.toString()).putInt("index",max(0,player.currentMediaItemIndex)).putLong("position",player.currentPosition).apply()}
  private fun analyse(x:FloatArray){
   // Radix-2 FFT on a worker; audio callback only copies PCM into a bounded mailbox.
-  val n=x.size;val re=DoubleArray(n){x[it].toDouble()*(.5-.5*cos(2*PI*it/(n-1)))};val im=DoubleArray(n)
+  val n=x.size;val re=fftReal;val im=fftImag;for(i in 0 until n){re[i]=x[i]*fftWindow[i];im[i]=0.0}
   var j=0
   for(i in 1 until n){var bit=n shr 1;while((j and bit)!=0){j=j xor bit;bit=bit shr 1};j=j xor bit;if(i<j){val v=re[i];re[i]=re[j];re[j]=v}}
   var length=2
-  while(length<=n){val angle=-2*PI/length;val half=length/2;var start=0;while(start<n){for(k in 0 until half){val c=cos(angle*k);val s=sin(angle*k);val b=start+k+half;val a=start+k;val vr=re[b]*c-im[b]*s;val vi=re[b]*s+im[b]*c;re[b]=re[a]-vr;im[b]=im[a]-vi;re[a]+=vr;im[a]+=vi};start+=length};length*=2}
-  val bands=DoubleArray(64);var flux=0.0;var weighted=0.0;var total=0.0
-  for(i in bands.indices){val low=max(1,(30*600.0.pow(i/64.0)*n/rate).toInt());val high=min(n/2,max(low+1,(30*600.0.pow((i+1)/64.0)*n/rate).toInt()));var level=0.0;for(k in low until high)level=max(level,sqrt(re[k]*re[k]+im[k]*im[k])/n);level=(20*log10(max(.00001,level))+70)/55;bands[i]=level.coerceIn(0.0,1.0);flux+=max(0.0,bands[i]-previous[i]);previous[i]=(previous[i]*.65+bands[i]*.35).toFloat();weighted+=bands[i]*i/63;total+=bands[i]}
-  flux/=64;val now=System.currentTimeMillis();val beat=flux>max(.018,beatAverage*1.7)&&now-lastBeat>240;beatAverage+=(flux-beatAverage)*.08;if(beat){lastBeat=now;beatCount++}
-  fun average(a:Int,b:Int)=bands.sliceArray(a..b).average()
+  while(length<=n){val stride=n/length;val half=length/2;var start=0;while(start<n){for(k in 0 until half){val c=fftCos[k*stride];val s=fftSin[k*stride];val b=start+k+half;val a=start+k;val vr=re[b]*c-im[b]*s;val vi=re[b]*s+im[b]*c;re[b]=re[a]-vr;im[b]=im[a]-vi;re[a]+=vr;im[a]+=vi};start+=length};length*=2}
+  val bands=bandLevels;var flux=0.0;var weighted=0.0;var total=0.0
+  for(i in bands.indices){val low=max(1,(30*600.0.pow(i/64.0)*n/rate).toInt());val high=min(n/2,max(low+1,(30*600.0.pow((i+1)/64.0)*n/rate).toInt()));var level=0.0;for(k in low until high)level=max(level,sqrt(re[k]*re[k]+im[k]*im[k])/n);level=((20*log10(max(.00001,level))+72)/72).coerceIn(0.0,1.0).pow(1.35);bands[i]=level.coerceIn(0.0,1.0);flux+=max(0.0,bands[i]-previous[i]);previous[i]=(previous[i]*.45+bands[i]*.55).toFloat();weighted+=bands[i]*i/63;total+=bands[i]}
+  flux/=64;val now=android.os.SystemClock.elapsedRealtime();val beat=flux>max(.009,beatAverage*1.55)&&now-lastBeat>180;beatAverage+=(flux-beatAverage)*.035;if(beat){lastBeat=now;beatCount++}
+  fun response(a:Int,b:Int,channel:Int):Double{
+   var level=0.0;for(i in a..b)level+=bands[i];level/=(b-a+1)
+   val baseline=bandAverage[channel];bandAverage[channel]+=(level-baseline)*.012
+   // Absolute energy plus a short/long level ratio preserves kicks on compressed songs.
+   val relative=((level-baseline*.58)/(baseline*.65+.025)).coerceIn(0.0,1.0)
+   return (level*.45+relative*.55).coerceIn(0.0,1.0)
+  }
   val wave=JSONArray();for(i in 0 until 256)wave.put(((x[i*n/256]+1)*127.5).toInt().coerceIn(0,255))
   val spectrum=JSONArray();bands.forEach{spectrum.put((it*255).toInt())}
   val rms=sqrt(x.sumOf{it.toDouble()*it}/n)
-  features=JSONObject().put("sequence",++featureSequence).put("capturedAt",android.os.SystemClock.elapsedRealtime()).put("bass",average(0,19)).put("mid",average(20,42)).put("treble",average(43,63)).put("rms",rms).put("peak",x.maxOf{abs(it)}).put("energy",total/64).put("centroid",if(total>0)weighted/total else 0).put("beat",if(beat)1 else 0).put("beatCount",beatCount).put("onset",min(1.0,flux*10)).put("bands",spectrum).put("waveform",wave)
+  features=JSONObject().put("sequence",++featureSequence).put("capturedAt",android.os.SystemClock.elapsedRealtime()).put("bass",response(0,19,0)).put("mid",response(20,42,1)).put("treble",response(43,63,2)).put("rms",rms).put("peak",x.maxOf{abs(it)}).put("energy",total/64).put("centroid",if(total>0)weighted/total else 0).put("beat",if(beat)1 else 0).put("beatCount",beatCount).put("onset",min(1.0,flux*22)).put("bands",spectrum).put("waveform",wave)
  }
  override fun onGetSession(info:MediaSession.ControllerInfo):MediaSession?=session
  override fun onDestroy(){main.removeCallbacks(checkpoint);persist();worker.shutdownNow();player.release();session?.release();instance=null;PlaybackWidget.update(this);super.onDestroy()}

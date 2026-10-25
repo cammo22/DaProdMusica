@@ -17,8 +17,8 @@ class WidgetFramesSmokeTest {
   try {
    assertEquals(24, first.size)
    for (i in first.indices) {
-    assertEquals(192, first[i].width)
-    assertEquals(96, first[i].height)
+    assertEquals(128, first[i].width)
+    assertEquals(128, first[i].height)
     assertTrue("Seeded scene changed at frame $i", first[i].sameAs(replay[i]))
    }
    assertFalse("Animation contains repeated still frames", first[0].sameAs(first[1]))

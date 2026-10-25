@@ -10,6 +10,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import kotlin.math.*
 import kotlin.random.Random
+import org.json.JSONObject
 
 /** RemoteViews cannot host GL. The launcher animates a bounded bitmap loop itself:
  * no wake lock, background frame timer, microphone or overlay permission. */
@@ -41,9 +42,13 @@ class PlaybackWidget:AppWidgetProvider() {
   private var seed=Random.nextInt()
   private var frames:List<Bitmap>?=null
   private var trackId=""
-  fun pin(context:Context):Boolean{
+  fun pin(context:Context):JSONObject{
    val manager=AppWidgetManager.getInstance(context)
-   return manager.isRequestPinAppWidgetSupported && manager.requestPinAppWidget(ComponentName(context,PlaybackWidget::class.java),null,null)
+   val component=ComponentName(context,PlaybackWidget::class.java)
+   val supported=manager.isRequestPinAppWidgetSupported
+   val callback=PendingIntent.getBroadcast(context,12,Intent(context,PlaybackWidget::class.java).setAction("android.appwidget.action.APPWIDGET_UPDATE"),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+   val requested=supported&&manager.requestPinAppWidget(component,null,callback)
+   return JSONObject().put("supported",supported).put("requested",requested).put("pinned",manager.getAppWidgetIds(component).isNotEmpty())
   }
   fun update(context:Context){
    val manager=AppWidgetManager.getInstance(context)
@@ -57,6 +62,17 @@ class PlaybackWidget:AppWidgetProvider() {
    if(trackId!=item?.mediaId){trackId=item?.mediaId?:"";seed=Random.nextInt();frames=null}
    val running=player?.isPlaying==true
    val view=RemoteViews(context.packageName,if(running)R.layout.music_widget else R.layout.music_widget_paused)
+   val artwork=item?.mediaMetadata?.artworkData
+   if(artwork!=null){
+    val options=BitmapFactory.Options().apply{inJustDecodeBounds=true};BitmapFactory.decodeByteArray(artwork,0,artwork.size,options)
+    options.inSampleSize=max(1,max(options.outWidth,options.outHeight)/256);options.inJustDecodeBounds=false
+    BitmapFactory.decodeByteArray(artwork,0,artwork.size,options)?.let{source->
+     val image=Bitmap.createBitmap(192,192,Bitmap.Config.ARGB_8888);val c=Canvas(image);val paint=Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+     val scale=192f/min(source.width,source.height);val m=Matrix();m.setScale(scale,scale);m.postTranslate((192-source.width*scale)/2,(192-source.height*scale)/2)
+     paint.shader=BitmapShader(source,Shader.TileMode.CLAMP,Shader.TileMode.CLAMP).apply{setLocalMatrix(m)}
+     c.drawRoundRect(0f,0f,192f,192f,28f,28f,paint);view.setImageViewBitmap(R.id.widget_cover,image);source.recycle()
+    }
+   }else view.setImageViewResource(R.id.widget_cover,R.drawable.widget_effect)
    view.setTextViewText(R.id.widget_title,item?.mediaMetadata?.title?:"DaProd Musica")
    view.setTextViewText(R.id.widget_artist,item?.mediaMetadata?.artist?:"Tocca Play")
    view.setImageViewResource(R.id.widget_play,if(running)R.drawable.widget_pause else R.drawable.widget_play)
@@ -75,27 +91,18 @@ class PlaybackWidget:AppWidgetProvider() {
     frame.setImageViewBitmap(R.id.widget_frame_image,bitmap)
     view.addView(R.id.widget_frames,frame)
    }
-   view.setInt(R.id.widget_frames,"setFlipInterval",220)
+   view.setInt(R.id.widget_frames,"setFlipInterval",90)
    return view
   }
   internal fun makeFrames(value:Int):List<Bitmap>{
-   val rng=Random(value);val scenes=(0..5).shuffled(rng).take(3);val hue=rng.nextInt(360).toFloat()
+   val hue=(value.toLong().and(0xFFFFFF)%360).toFloat()
    return List(24){index->
-    val phase=(index%8)/8f*2*PI.toFloat();val scene=scenes[index/8]
-    val bitmap=Bitmap.createBitmap(192,96,Bitmap.Config.ARGB_8888);val canvas=Canvas(bitmap)
-    canvas.drawColor(Color.rgb(7,11,19));val paint=Paint(Paint.ANTI_ALIAS_FLAG)
-    for(i in 0 until 18){
-     paint.color=Color.HSVToColor(180,floatArrayOf((hue+scene*39+i*5)%360,.65f,1f));paint.style=Paint.Style.STROKE;paint.strokeWidth=1.2f
-     val x=96f;val y=48f;val n=i/18f
-     when(scene){
-      0->{val radius=6f+i*3+sin(phase+n*5)*4;canvas.drawOval(x-radius*1.7f,y-radius*.5f,x+radius*1.7f,y+radius*.5f,paint)}
-      1->{val path=Path();for(k in 0..96){val px=k*2f;val py=y+sin(px*.035f+phase+n*6)*16+cos(px*.02f-phase)*n*22;if(k==0)path.moveTo(px,py)else path.lineTo(px,py)};canvas.drawPath(path,paint)}
-      2->{val a=n*2*PI.toFloat()+phase*.25f;val r=12+i*2.6f;paint.style=Paint.Style.FILL;canvas.drawCircle(x+cos(a)*r*1.6f,y+sin(a)*r*.65f,2+n*2,paint)}
-      3->{val d=(n+phase/(2*PI.toFloat()))%1f;val r=4+d*d*115;canvas.drawRect(x-r,y-r*.6f,x+r,y+r*.6f,paint)}
-      4->{val px=6+i*10f;val height=10+abs(sin(n*9+phase))*50;paint.strokeWidth=4f;canvas.drawLine(px,y-height/2,px,y+height/2,paint)}
-      else->{val path=Path();for(k in 0..90){val a=k/90f*2*PI.toFloat();val r=15+i*1.5f+sin(a*5+phase)*7;val px=x+cos(a)*r*1.6f;val py=y+sin(a)*r*.6f;if(k==0)path.moveTo(px,py)else path.lineTo(px,py)};path.close();canvas.drawPath(path,paint)}
-     }
-    };bitmap
+    val phase=index/24f*360f;val bitmap=Bitmap.createBitmap(128,128,Bitmap.Config.ARGB_8888);val c=Canvas(bitmap);val paint=Paint(Paint.ANTI_ALIAS_FLAG)
+    paint.style=Paint.Style.STROKE;paint.strokeWidth=1.2f;paint.color=Color.argb(35,190,220,210);c.drawRoundRect(5f,5f,123f,123f,26f,26f,paint)
+    paint.color=Color.HSVToColor(190,floatArrayOf(hue,.3f,.95f));paint.strokeWidth=2f
+    c.drawArc(2f,2f,126f,126f,phase,65f,false,paint)
+    paint.color=Color.HSVToColor(90,floatArrayOf((hue+40)%360,.2f,.8f));c.drawArc(2f,2f,126f,126f,phase+180,42f,false,paint)
+    bitmap
    }
   }
  }

@@ -53,11 +53,12 @@ test('Arrow keys move the front of the sphere in the indicated screen direction'
 
 test('Two-finger pinch scales the sphere within bounds without rotating or selecting a cover',()=>{
  const selected=[],{canvas,galaxy}=sphere(track=>selected.push(track.id));
+ const initialYaw=galaxy.yaw;
  const send=(type,id,x,y=240)=>event(canvas,type,{pointerId:id,clientX:x,clientY:y});
  send('pointerdown',1,250);send('pointerdown',2,350);
  send('pointermove',2,400);
  assert.equal(galaxy.zoom,1.5);
- assert.equal(galaxy.yaw,0);assert.equal(galaxy.pitch,0);
+ assert.equal(galaxy.yaw,initialYaw);assert.equal(galaxy.pitch,0);
  assert.deepEqual(galaxy.velocity,[0,0]);
  send('pointermove',2,1250);assert.equal(galaxy.zoom,1.8);
  send('pointermove',2,251);assert.equal(galaxy.zoom,.7);
@@ -77,3 +78,5 @@ test('Cancelling a pinch clears both pointers and allows a fresh one-finger gest
  event(canvas,'pointerup',{pointerId:3,clientX:250,clientY:240});
  assert.deepEqual(selected,['front']);
 });
+
+test('The idle galaxy keeps rotating gently and Off freezes automatic motion',()=>{const {galaxy}=sphere();galaxy.velocity=[0,0];const before=galaxy.yaw;galaxy.frame(200);galaxy.frame(300);assert.ok(galaxy.yaw>before);galaxy.motion='off';const stopped=galaxy.yaw;galaxy.frame(400);assert.equal(galaxy.yaw,stopped);});

@@ -10,7 +10,7 @@ import app.tauri.plugin.*
 import org.json.JSONArray
 
 @InvokeArg
-class ExecuteArgs { var op:String="state";var requestId:Long=0;var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f;var url:String="";var digest:String="" }
+class ExecuteArgs { var op:String="state";var requestId:Long=0;var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f;var url:String="";var digest:String="";var target:String="music" }
 @UnstableApi
 @TauriPlugin
 class MusicPlugin(private val activity:Activity):Plugin(activity){
@@ -23,15 +23,23 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
  private var newestQueueRequest=0L
  private var webView:WebView?=null
  private val updates=UpdateController(activity)
- override fun load(webView:WebView){active=this;this.webView=webView}
+ override fun load(webView:WebView){
+  active=this;this.webView=webView
+  // Keep native selection/paste in text inputs, but do not let Android's long
+  // click menu take over effect-button/canvas gestures.
+  webView.setOnLongClickListener{webView.hitTestResult.type!=WebView.HitTestResult.EDIT_TEXT_TYPE}
+ }
  override fun onResume(){PlaybackService.instance?.analysisEnabled=uiAnalysis}
  override fun onPause(){PlaybackService.instance?.analysisEnabled=false}
  override fun onDestroy(){handler.removeCallbacksAndMessages(null);webView=null;if(active===this)active=null}
  @Command fun execute(invoke:Invoke){
   try{
    val args=invoke.parseArgs(ExecuteArgs::class.java)
-   if(args.op.startsWith("update")){updates.execute(args.op,args.url,args.digest,{invoke.resolve(JSObject(it.toString()))},{invoke.reject(it)});return}
-   if(args.op=="widget"){invoke.resolve(JSObject().apply{put("supported",PlaybackWidget.pin(activity))});return}
+   if(args.op.startsWith("update")){updates.execute(args.op,args.url,args.digest,{invoke.resolve(JSObject(it.toString()))},{invoke.reject(it)},args.target);return}
+   if(args.op=="widget"){
+    activity.runOnUiThread{try{invoke.resolve(JSObject(PlaybackWidget.pin(activity).toString()))}catch(error:Exception){invoke.reject(error.message?:"Apri il menu Widget della Home e scegli DaProd Musica.")}}
+    return
+   }
    if(PlaybackService.instance==null){activity.startService(Intent(activity,PlaybackService::class.java));waitService(invoke,args,0)}else perform(invoke,args)
   }catch(error:Exception){invoke.reject(error.message?:"Comando audio non valido")}
  }

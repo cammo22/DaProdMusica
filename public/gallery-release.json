@@ -1,0 +1,11 @@
+{
+  "tag_name": "v2.1.1",
+  "name": "DapGalleria",
+  "package": "com.dapprod.dapgalleria",
+  "asset": {
+    "name": "DapGalleria-v2.1.1.apk",
+    "browser_download_url": "https://github.com/cammo22/DapGalleria/releases/download/v2.1.1/DapGalleria-v2.1.1.apk",
+    "digest": "sha256:bc6e2ee49d2c38ef11c0f1ea4c1c7095fea3e534723a1c5df48885dfe841e0be",
+    "size": 2524176
+  }
+}

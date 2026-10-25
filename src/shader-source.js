@@ -3,7 +3,7 @@ export const vertexSource='attribute vec2 position; varying vec2 vUv; void main(
 export const displaySource='precision mediump float; varying vec2 vUv; uniform sampler2D image; void main(){gl_FragColor=texture2D(image,vUv);}';
 export function composeShader(common,body,id=''){
  const interaction=interactionCode(id);
- const uniforms=`uniform float uTime;uniform vec2 uPointer;uniform vec2 uTouchOrigin;uniform float uTouchAge;uniform float uTouch;uniform vec3 uTrackTint;uniform float uSeed;uniform float uEvolutionKaleido;uniform float uEvolutionZoom;uniform float uEvolutionWarp;uniform float uEvolutionHue;`;
+ const uniforms=`uniform float uTime;uniform vec2 uPointer;uniform vec2 uTouchOrigin;uniform vec2 uTouchVelocity;uniform float uTouchAge;uniform float uTouch;uniform vec3 uTrackTint;uniform float uSeed;uniform float uEvolutionKaleido;uniform float uEvolutionZoom;uniform float uEvolutionWarp;uniform float uEvolutionHue;mat2 rot(float a);`;
  const transform=`p/=max(.4,uEvolutionZoom);vec2 focus=uPointer*vec2(uAspect*2.,2.);vec2 origin=uTouchOrigin*vec2(uAspect*2.,2.);vec2 delta=p-${id==='musica.aero-tides'?'origin':'focus'};
  ${interaction.coordinates}
  p+=uEvolutionWarp*.14*vec2(sin(p.y*4.+uTime*.2),cos(p.x*4.-uTime*.2));
