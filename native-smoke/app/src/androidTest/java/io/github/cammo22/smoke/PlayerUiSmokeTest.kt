@@ -79,7 +79,20 @@ class PlayerUiSmokeTest {
    "document.querySelectorAll('[data-accessible]').length===47 && !!document.querySelector('#mini-open')")
  }
 
+ private fun painted(screen: ActivityScenario<PlayerSmokeActivity>) {
+  val done = CountDownLatch(1)
+  screen.onActivity { activity ->
+   activity.playerView.postVisualStateCallback(1, object: android.webkit.WebView.VisualStateCallback() {
+    override fun onComplete(requestId: Long) {
+     activity.playerView.postOnAnimation { activity.playerView.postOnAnimation { done.countDown() } }
+    }
+   })
+  }
+  assertTrue("WebView did not present the current DOM before the touch", done.await(15, TimeUnit.SECONDS))
+ }
+
  private fun point(screen: ActivityScenario<PlayerSmokeActivity>, selector: String, yFraction: Double = .5): Pair<Float, Float> {
+  painted(screen)
   val quoted = JSONObject.quote(selector)
   val coordinates = JSONArray(js(screen, "(()=>{const e=document.querySelector($quoted),r=e.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height*$yFraction;return [x,y,innerWidth,!!document.elementFromPoint(x,y)?.closest($quoted)]})()"))
   assertTrue("$selector is obscured or outside the viewport", coordinates.getBoolean(3))
@@ -130,6 +143,12 @@ class PlayerUiSmokeTest {
    openPlayer(screen)
    holdEffects(screen, .3) // Touch the actual SVG child, not only the button label.
    await(screen, "Visible effect cards did not load", "Array.from(document.querySelectorAll('[data-preview]')).slice(0,2).every(e=>e.complete&&e.naturalWidth>=96)")
+   val context = InstrumentationRegistry.getInstrumentation().targetContext
+   val bloomSrc = JSONArray("[${js(screen, "document.querySelector('[data-preview=\"daprod.audio-bloom\"]').src")}]").getString(0)
+   if (bloomSrc.startsWith("data:image/")) {
+    val folder = File(context.getExternalFilesDir(null), "effect-previews").apply { mkdirs() }
+    File(folder, "daprod.audio-bloom.png").writeBytes(Base64.decode(bloomSrc.substringAfter(','), Base64.DEFAULT))
+   }
    capture(screen, "effects")
    assertEquals("All production effects must be selectable", "22", js(screen, "document.querySelectorAll('#effect-grid [data-effect]').length"))
    assertEquals("A hold must not silently turn on shuffle", "false", js(screen, "document.querySelector('#effects-shuffle').checked"))

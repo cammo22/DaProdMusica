@@ -43,7 +43,7 @@ jobs:
         env:
           SCENARIO: ${{ matrix.scenario }}
         with:
-          api-level: 35
+          api-level: ${{ matrix.scenario == 'native' && 35 || 33 }}
           target: google_apis
           arch: x86_64
           disable-animations: true
