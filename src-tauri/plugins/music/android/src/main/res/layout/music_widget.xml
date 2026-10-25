@@ -1,10 +1,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/widget_background" android:padding="12dp">
  <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical">
-  <FrameLayout android:layout_width="102dp" android:layout_height="102dp">
+  <FrameLayout android:id="@+id/widget_effect" android:layout_width="86dp" android:layout_height="86dp" android:contentDescription="Cambia colore animazione">
    <ViewFlipper android:id="@+id/widget_frames" android:layout_width="match_parent" android:layout_height="match_parent" android:autoStart="true" android:flipInterval="90"/>
-   <ImageView android:id="@+id/widget_cover" android:layout_width="82dp" android:layout_height="82dp" android:layout_gravity="center" android:scaleType="fitCenter" android:contentDescription="Copertina del brano"/>
+   <ImageView android:id="@+id/widget_cover" android:layout_width="70dp" android:layout_height="70dp" android:layout_gravity="center" android:scaleType="fitCenter" android:contentDescription="Copertina del brano"/>
   </FrameLayout>
-  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical" android:paddingLeft="10dp">
+  <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical" android:paddingLeft="8dp">
    <LinearLayout android:id="@+id/widget_info" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center_vertical">
     <TextView android:id="@+id/widget_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="DaProd Musica" android:textColor="#F5F5F2" android:textStyle="bold" android:textSize="14sp" android:maxLines="2" android:ellipsize="end"/>
     <TextView android:id="@+id/widget_artist" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#A3ADA8" android:textSize="11sp" android:layout_marginTop="4dp" android:maxLines="1" android:ellipsize="end"/>
@@ -13,7 +13,6 @@
     <ImageButton android:id="@+id/widget_prev" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:src="@drawable/widget_prev" android:background="@android:color/transparent" android:contentDescription="Brano precedente" android:padding="13dp"/>
     <ImageButton android:id="@+id/widget_play" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:src="@drawable/widget_play" android:background="@android:color/transparent" android:contentDescription="Riproduci" android:padding="10dp"/>
     <ImageButton android:id="@+id/widget_next" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:src="@drawable/widget_next" android:background="@android:color/transparent" android:contentDescription="Brano successivo" android:padding="13dp"/>
-    <ImageButton android:id="@+id/widget_effect" android:layout_width="36dp" android:layout_height="48dp" android:src="@drawable/widget_effect" android:background="@android:color/transparent" android:contentDescription="Colore animazione" android:padding="10dp"/>
    </LinearLayout>
   </LinearLayout>
  </LinearLayout>

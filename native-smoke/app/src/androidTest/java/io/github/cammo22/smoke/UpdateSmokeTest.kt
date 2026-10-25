@@ -43,6 +43,17 @@ class UpdateSmokeTest {
    .forEach { assertFalse("Invalid digest was accepted: $it", UpdateController.validSource(source, it)) }
  }
 
+ @Test fun companionDownloadsCannotCrossApplicationBoundaries() {
+  val gallery = "https://github.com/cammo22/DapGalleria/releases/download/v2.1.1/DapGalleria-v2.1.1.apk"
+  assertTrue(UpdateController.validSource(gallery, digest, "gallery"))
+  assertFalse(UpdateController.validSource(gallery, digest, "music"))
+  assertFalse(UpdateController.validSource(source, digest, "gallery"))
+  assertFalse(UpdateController.validSource(gallery, digest, "unknown"))
+  assertFalse(UpdateController.validSource(gallery.replace("/v2.1.1/", "/v2.1.2/"), digest, "gallery"))
+  assertFalse(UpdateController.validSource(gallery.replace("cammo22/", "other/"), digest, "gallery"))
+  assertEquals("Pinned companion signer must be a SHA-256 certificate hash", 64, UpdateController.GALLERY_CERTIFICATE.length)
+ }
+
  @Test fun updateStateAndInvalidCommandsReturnWithoutOpeningTheInstaller() {
   val context = InstrumentationRegistry.getInstrumentation().targetContext
   val prefs = context.getSharedPreferences("dap-update", 0)
@@ -52,11 +63,11 @@ class UpdateSmokeTest {
   ActivityScenario.launch(SmokeActivity::class.java).use { screen ->
    lateinit var controller: UpdateController
    screen.onActivity { controller = UpdateController(it) }
-   fun call(op: String, url: String = "", sha: String = ""): Pair<JSONObject?, String?> {
+   fun call(op: String, url: String = "", sha: String = "", target: String = "music"): Pair<JSONObject?, String?> {
     val finished = CountDownLatch(1)
     val state = AtomicReference<JSONObject>()
     val error = AtomicReference<String>()
-    screen.onActivity { controller.execute(op, url, sha, { state.set(it); finished.countDown() }, { error.set(it); finished.countDown() }) }
+    screen.onActivity { controller.execute(op, url, sha, { state.set(it); finished.countDown() }, { error.set(it); finished.countDown() }, target) }
     assertTrue("Update command $op never completed", finished.await(10, TimeUnit.SECONDS))
     return Pair(state.get(), error.get())
    }
@@ -92,6 +103,13 @@ class UpdateSmokeTest {
     prefs.edit().putString("digest", sha).commit()
     assertEquals("APK non valido.", call("updateInstall").second)
    } finally { apk.delete(); prefs.edit().clear().commit() }
+   context.getSharedPreferences("dap-gallery-update", 0).edit().clear().commit()
+   val galleryIdle = call("updateState", target = "gallery")
+   assertNull(galleryIdle.second)
+   assertEquals("idle", galleryIdle.first!!.getString("status"))
+   assertNotNull("Music download cannot be routed to companion install", call("updateDownload", source, digest, "gallery").second)
+   assertNotNull("Unknown target must be rejected", call("updateState", target = "unknown").second)
+   assertEquals(-1L, context.getSharedPreferences("dap-gallery-update", 0).getLong("id", -1))
    assertNotNull("Unknown update command must be rejected", call("updateUnknown").second)
   }
  }

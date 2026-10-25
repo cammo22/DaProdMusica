@@ -26,12 +26,12 @@ export function createPlayerSheet({sheet,stage,mini,zones,onOpen,onClose,onDrag=
   if(!fromMini&&!opened)return;
   const transform=getComputedStyle(sheet).transform;let current=offset;
   if(opened&&transform!=='none'){try{current=new DOMMatrixReadOnly(transform).m42;}catch{}}
-  clearTimeout(timer);serial++;for(const el of [sheet,stage])el.style.transition='none';
+  clearTimeout(timer);serial++;for(const el of [sheet,stage])el.style.transition='none';if(opened)set(current);
   drag={id:e.pointerId,x:e.clientX,y:e.clientY,lastY:e.clientY,lastT:performance.now(),velocity:0,fromMini,active:false,origin:fromMini?height():current};
  }
  const move=e=>{
   if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-  if(!drag.active){if(Math.abs(dy)<7)return;if(Math.abs(dx)>Math.abs(dy)||drag.fromMini&&dy>0){drag=null;return;}drag.active=true;try{document.body.setPointerCapture(e.pointerId);}catch{}if(drag.fromMini){opened=true;onOpen();}document.body.classList.add('sheet-moving');onDrag(true);}
+  if(!drag.active){if(Math.abs(dy)<7)return;if(Math.abs(dx)>Math.abs(dy)||drag.fromMini&&dy>0){drag=null;if(opened)settle(0);else reset();return;}drag.active=true;try{document.body.setPointerCapture(e.pointerId);}catch{}if(drag.fromMini){opened=true;onOpen();}document.body.classList.add('sheet-moving');onDrag(true);}
   e.preventDefault();const now=performance.now(),dt=now-drag.lastT;
   if(dt>0)drag.velocity=drag.velocity*.35+(e.clientY-drag.lastY)/dt*.65;
   drag.lastY=e.clientY;drag.lastT=now;set(drag.origin+dy);

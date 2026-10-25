@@ -113,13 +113,18 @@ class PlayerUiSmokeTest {
    tap(screen, "#effects-shuffle")
    assertEquals("Shuffle did not respond to a finger tap inside the modal", "true", js(screen, "document.querySelector('#effects-shuffle').checked"))
    assertEquals("true", js(screen, "JSON.parse(localStorage.getItem('dap-effect-shuffle'))"))
+   tap(screen, "#effects-lock")
+   assertEquals("Lock and shuffle must be mutually exclusive", "true", js(screen, "document.querySelector('#effects-lock').checked && !document.querySelector('#effects-shuffle').checked"))
+   tap(screen, "#effects-shuffle")
+   assertEquals("Shuffle must release the effect lock", "true", js(screen, "!document.querySelector('#effects-lock').checked && document.querySelector('#effects-shuffle').checked"))
    screen.onActivity { BackNavigation.dispatch(it.playerView) }
    await(screen, "Native back did not close just the modal", "!document.querySelector('#effects-dialog').open && document.body.classList.contains('expanded')")
    holdEffects(screen, .75) // Long-press the text child on a second invocation.
    assertEquals("Opening the menu changed the selected effect", selected, js(screen, "document.querySelector('#effect-grid [aria-pressed=true]')?.dataset.effect"))
    assertEquals("Shuffle setting was lost when reopening the menu", "true", js(screen, "document.querySelector('#effects-shuffle').checked"))
-   val other = js(screen, "document.querySelector('#effect-grid [data-effect]:not([aria-pressed=true]))?.dataset.effect")
+   val other = js(screen, "document.querySelector('#effect-grid [data-effect]:not([aria-pressed=true])')?.dataset.effect")
    val id = JSONArray("[$other]").getString(0)
+   js(screen, "(()=>{document.querySelector('[data-effect=\"$id\"]').scrollIntoView({block:'center'});return true})()")
    tap(screen, "#effect-grid [data-effect=\"$id\"]")
    await(screen, "Choosing a real effect card did not close the menu", "!document.querySelector('#effects-dialog').open")
    holdEffects(screen)
@@ -150,6 +155,44 @@ class PlayerUiSmokeTest {
     }
    }
    assertEquals("Rendering previews changed the selected effect count", "1", js(screen, "document.querySelectorAll('#effect-grid [aria-pressed=true]').length"))
+  }
+ }
+
+ @Test fun settingsDismissOnBackdropAndPlayerFollowsFingerToTheBottom() {
+  ActivityScenario.launch(PlayerSmokeActivity::class.java).use { screen ->
+   ready(screen)
+   tap(screen, "#settings")
+   await(screen, "Settings did not open", "document.querySelector('#preferences').open")
+   assertEquals("Obsolete volume/intensity controls are still present", "false", js(screen, "!!document.querySelector('#volume,#intensity')"))
+   assertEquals("Unexpected movement choices", "[\"Fluido\",\"Risparmio energia\",\"Off\"]", js(screen, "Array.from(document.querySelector('#motion').options,o=>o.text)"))
+   val down = SystemClock.uptimeMillis()
+   val outside = Pair(3f, 3f)
+   touch(screen, MotionEvent.ACTION_DOWN, outside, down)
+   touch(screen, MotionEvent.ACTION_UP, outside, down)
+   await(screen, "A backdrop tap did not close Settings", "!document.querySelector('#preferences').open")
+   openPlayer(screen)
+   val start = point(screen, "#player-drag-zone", .65)
+   val height = js(screen, "innerHeight").toDouble()
+   var physicalWidth = 0
+   screen.onActivity { physicalWidth = it.playerView.width }
+   val scale = physicalWidth / js(screen, "innerWidth").toDouble()
+   val startTime = SystemClock.uptimeMillis()
+   touch(screen, MotionEvent.ACTION_DOWN, start, startTime)
+   for (i in 1..4) {
+    touch(screen, MotionEvent.ACTION_MOVE, Pair(start.first, start.second + (height * .1 * i * scale).toFloat()), startTime)
+    Thread.sleep(35)
+   }
+   val displacement = js(screen, "new DOMMatrixReadOnly(getComputedStyle(document.querySelector('#expanded-player')).transform).m42").toDouble()
+   assertTrue("Player does not follow the finger: $displacement", displacement > height * .36 && displacement < height * .44)
+   assertEquals("Player collapsed before the finger was released", "true", js(screen, "document.body.classList.contains('expanded')"))
+   val stage = js(screen, "new DOMMatrixReadOnly(getComputedStyle(document.querySelector('#effect-stage')).transform).m42").toDouble()
+   assertEquals("Effects and controls must move together", displacement, stage, 2.0)
+   touch(screen, MotionEvent.ACTION_UP, Pair(start.first, start.second + (height * .4 * scale).toFloat()), startTime)
+   await(screen, "Dragged player did not settle into the mini player", "!document.body.classList.contains('expanded') && document.querySelector('#expanded-player').hidden")
+   Thread.sleep(450)
+   openPlayer(screen)
+   screen.onActivity { BackNavigation.dispatch(it.playerView) }
+   await(screen, "Android Back did not collapse the player", "!document.body.classList.contains('expanded')")
   }
  }
 }

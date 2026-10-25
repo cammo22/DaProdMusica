@@ -7,7 +7,7 @@ export class AudioEngine extends EventTarget{
  fail(message){this.dispatchEvent(new CustomEvent('failure',{detail:message}));}
  async command(op,extra={}){if(op==='analysis')this.analysisVisible=!!extra.enabled;return invoke('plugin:music|execute',{payload:{op,...extra}});}
  async init(){if(this.native){this.apply(await this.command('init'));if(!this.polling){this.polling=true;this.schedule();}}else this.setMediaActions();}
- schedule(){setTimeout(async()=>{try{if(!document.hidden&&!this.pendingQueue)this.apply(await this.command('state'));}catch(e){this.fail(String(e));}this.schedule();},document.hidden?1000:this.analysisVisible?(this.visualMode==='reduced'?65:32):180);}
+ schedule(){setTimeout(async()=>{try{if(!document.hidden&&!this.pendingQueue){const generation=this.generation,state=await this.command('state');if(generation===this.generation&&!this.pendingQueue)this.apply(state);}}catch(e){this.fail(String(e));}this.schedule();},document.hidden?1000:this.analysisVisible?(this.visualMode==='reduced'?65:32):180);}
  apply(s){
   const oldId=this.current?.id,oldPlaying=this.playing,oldError=this.lastError;
   if(s.queue?.length)this.queue=s.queue;this.index=s.index??this.index;this.playing=!!s.playing;this.position=s.position||0;this.duration=s.duration||0;

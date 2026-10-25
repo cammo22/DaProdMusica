@@ -11,6 +11,7 @@ import androidx.media3.common.util.UnstableApi
 import kotlin.math.*
 import kotlin.random.Random
 import org.json.JSONObject
+import org.json.JSONArray
 
 /** RemoteViews cannot host GL. The launcher animates a bounded bitmap loop itself:
  * no wake lock, background frame timer, microphone or overlay permission. */
@@ -19,6 +20,7 @@ class PlaybackWidget:AppWidgetProvider() {
  override fun onUpdate(context:Context,manager:AppWidgetManager,ids:IntArray){update(context)}
  override fun onReceive(context:Context,intent:Intent){
   super.onReceive(context,intent)
+  if(intent.action==PINNED)update(context)
   if(intent.action==EFFECT){seed=Random.nextInt();frames=null;update(context)}
   if(intent.action==CONTROL){
    val action=intent.getStringExtra("command")?:"toggle"
@@ -38,6 +40,7 @@ class PlaybackWidget:AppWidgetProvider() {
  }
  companion object{
   const val CONTROL="io.github.cammo22.music.WIDGET_CONTROL"
+  const val PINNED="io.github.cammo22.music.WIDGET_PINNED"
   const val EFFECT="io.github.cammo22.music.WIDGET_EFFECT"
   private var seed=Random.nextInt()
   private var frames:List<Bitmap>?=null
@@ -46,7 +49,7 @@ class PlaybackWidget:AppWidgetProvider() {
    val manager=AppWidgetManager.getInstance(context)
    val component=ComponentName(context,PlaybackWidget::class.java)
    val supported=manager.isRequestPinAppWidgetSupported
-   val callback=PendingIntent.getBroadcast(context,12,Intent(context,PlaybackWidget::class.java).setAction("android.appwidget.action.APPWIDGET_UPDATE"),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+   val callback=PendingIntent.getBroadcast(context,12,Intent(context,PlaybackWidget::class.java).setAction(PINNED),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
    val requested=supported&&manager.requestPinAppWidget(component,null,callback)
    return JSONObject().put("supported",supported).put("requested",requested).put("pinned",manager.getAppWidgetIds(component).isNotEmpty())
   }
@@ -59,10 +62,14 @@ class PlaybackWidget:AppWidgetProvider() {
   internal fun buildViews(context:Context):RemoteViews{
    val player=PlaybackService.instance?.player
    val item=player?.currentMediaItem
-   if(trackId!=item?.mediaId){trackId=item?.mediaId?:"";seed=Random.nextInt();frames=null}
+   val saved=if(item==null)try{
+    val pref=context.getSharedPreferences("dap-playback",Context.MODE_PRIVATE)
+    JSONArray(pref.getString("queue","[]")).optJSONObject(pref.getInt("index",0))
+   }catch(_:Exception){null}else null
+   if(trackId!=(item?.mediaId?:saved?.optString("id"))){trackId=item?.mediaId?:saved?.optString("id")?:"";seed=Random.nextInt();frames=null}
    val running=player?.isPlaying==true
    val view=RemoteViews(context.packageName,if(running)R.layout.music_widget else R.layout.music_widget_paused)
-   val artwork=item?.mediaMetadata?.artworkData
+   val artwork=item?.mediaMetadata?.artworkData?:saved?.optString("artwork")?.takeIf{it.matches(Regex("artwork/[a-f0-9]+\\.(jpg|png|webp)"))}?.let{try{context.assets.open(it).use{stream->stream.readBytes()}}catch(_:Exception){null}}
    if(artwork!=null){
     val options=BitmapFactory.Options().apply{inJustDecodeBounds=true};BitmapFactory.decodeByteArray(artwork,0,artwork.size,options)
     options.inSampleSize=max(1,max(options.outWidth,options.outHeight)/256);options.inJustDecodeBounds=false
@@ -73,8 +80,8 @@ class PlaybackWidget:AppWidgetProvider() {
      c.drawRoundRect(0f,0f,192f,192f,28f,28f,paint);view.setImageViewBitmap(R.id.widget_cover,image);source.recycle()
     }
    }else view.setImageViewResource(R.id.widget_cover,R.drawable.widget_effect)
-   view.setTextViewText(R.id.widget_title,item?.mediaMetadata?.title?:"DaProd Musica")
-   view.setTextViewText(R.id.widget_artist,item?.mediaMetadata?.artist?:"Tocca Play")
+   view.setTextViewText(R.id.widget_title,item?.mediaMetadata?.title?:saved?.optString("title")?:"DaProd Musica")
+   view.setTextViewText(R.id.widget_artist,item?.mediaMetadata?.artist?:saved?.optString("artist","DaProd")?:"Tocca Play")
    view.setImageViewResource(R.id.widget_play,if(running)R.drawable.widget_pause else R.drawable.widget_play)
    view.setContentDescription(R.id.widget_play,if(running)"Pausa" else "Riproduci")
    for((id,command) in listOf(R.id.widget_play to "toggle",R.id.widget_next to "next",R.id.widget_prev to "prev")){

@@ -23,6 +23,7 @@ class PlayerSmokeActivity : Activity() {
  override fun onCreate(state: Bundle?) {
   super.onCreate(state)
   playerView = WebView(this)
+  io.github.cammo22.music.WebViewGestures.configure(playerView)
   playerView.settings.javaScriptEnabled = true
   playerView.settings.domStorageEnabled = true
   playerView.settings.allowFileAccess = false

@@ -1,3 +1,4 @@
+import {FramePacer} from './frame-pacer.js';
 import {meshScene,drawMesh} from './mesh-scenes.js';
 import {composeShader,vertexSource as vertex,displaySource as display} from './shader-source.js';
 import common from './suite-presets/common.glsl?raw';
@@ -13,7 +14,7 @@ const uniformName=name=>'u'+name.charAt(0).toUpperCase()+name.slice(1);
 // See third-party/DaProdSuite-LICENSE.txt and THIRD_PARTY.md.
 export class Visualizer {
   constructor(canvas,readAudio,onError=()=>{},{manual=false}={}) {
-    this.manual=manual;this.canvas=canvas;this.readAudio=readAudio;this.onError=onError;
+    this.pacer=new FramePacer();this.manual=manual;this.canvas=canvas;this.readAudio=readAudio;this.onError=onError;
     this.mode='Magma';this.intensity=1;this.enabled=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.genome=null;this.auto=false;this.evolveAt=0;this.transition=0;this.onEvolution=()=>{};
     this.frameAverage=16.7;this.adaptAt=0;this.lastRaf=0;this.motion="full";this.interval=16;this.touchVelocity=[0,0];this.lastTouch=null;this.quality=matchMedia('(pointer:coarse)').matches?.65:1;this.time=0;this.last=0;this.pointer=[0,0];this.origin=[0,0];this.touchAt=-100000;this.flight=0;this.tint=[.7,.9,.85];this.press=0;this.programs=new Map();this.targets=[];this.front=0;this.values={};
     this.gl=canvas.getContext('webgl',{alpha:false,antialias:false,powerPreference:'high-performance'});
@@ -43,7 +44,7 @@ export class Visualizer {
     const mesh=meshScene(this.gl,id,this.quality<1);const fragment=mesh?entry.body:composeShader(common,entry.body,id);
     this.programs.set(id,{...this.program(fragment,mesh?.vertex||vertex),manifest:entry.manifest,mesh});
   }return this.programs.get(id);}
-  frame(now){if(!this.manual)requestAnimationFrame(this.frame);if(!this.manual&&this.enabled&&!document.hidden){if(this.lastRaf){const gap=now-this.lastRaf;if(gap<200)this.frameAverage+=(gap-this.frameAverage)*.06;}this.lastRaf=now;if(!this.reduced&&now-this.adaptAt>2500){if(this.frameAverage>22&&this.quality>.38){this.quality=Math.max(.38,this.quality*.82);this.size();}else if(this.frameAverage<17.5&&this.quality<.85){this.quality=Math.min(.85,this.quality+.035);this.size();}this.adaptAt=now;}}else this.lastRaf=0;if(this.lost||document.hidden||!this.enabled||!this.targets.length||(!this.manual&&now-this.last<(this.reduced?31:15)))return;const dt=this.manual?1/30:Math.min(.1,Math.max(0,(now-this.last)/1000));this.last=now;this.time+=dt;try{const gl=this.gl,scene=this.scene();if(!this.finishProgram(scene)||!this.finishProgram(this.blit))return;const u=scene.uniforms,a=this.readAudio();this.bind(scene);const set=(name,value)=>{if(u[name]!=null)gl.uniform1f(u[name],value);};
+  frame(now){if(!this.manual)requestAnimationFrame(this.frame);if(!this.manual&&this.enabled&&!document.hidden){if(this.lastRaf){const gap=now-this.lastRaf;if(gap<200)this.frameAverage+=(gap-this.frameAverage)*.06;}this.lastRaf=now;if(!this.reduced&&now-this.adaptAt>2500){if(this.frameAverage>22&&this.quality>.38){this.quality=Math.max(.38,this.quality*.82);this.size();}else if(this.frameAverage<17.5&&this.quality<.85){this.quality=Math.min(.85,this.quality+.035);this.size();}this.adaptAt=now;}}else this.lastRaf=0;if(this.lost||document.hidden||!this.enabled||!this.targets.length||(!this.manual&&!this.pacer.due(now,this.reduced?30:60)))return;const dt=this.manual?1/30:Math.min(.1,Math.max(0,(now-this.last)/1000));this.last=now;this.time+=dt;try{const gl=this.gl,scene=this.scene();if(!this.finishProgram(scene)||!this.finishProgram(this.blit))return;const u=scene.uniforms,a=this.readAudio();this.bind(scene);const set=(name,value)=>{if(u[name]!=null)gl.uniform1f(u[name],value);};
     if(this.auto&&this.time>this.evolveAt){const choices=PRESETS.filter(p=>p.manifest.id!==this.mode);this.mode=choices[seedNumber()%choices.length].manifest.id;this.onEvolution(this.mode);this.genome=null;this.transition=1;this.evolveAt=this.time+(this.interval||16);}
     const genes=this.genome?.preset===scene.manifest.id?this.genome:null;
     for(const [name,parameter]of Object.entries(scene.manifest.parameters))set(uniformName(name),genes?.parameters[name]??parameter.default);

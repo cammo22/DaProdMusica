@@ -27,7 +27,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
   active=this;this.webView=webView
   // Keep native selection/paste in text inputs, but do not let Android's long
   // click menu take over effect-button/canvas gestures.
-  webView.setOnLongClickListener{webView.hitTestResult.type!=WebView.HitTestResult.EDIT_TEXT_TYPE}
+  WebViewGestures.configure(webView)
  }
  override fun onResume(){PlaybackService.instance?.analysisEnabled=uiAnalysis}
  override fun onPause(){PlaybackService.instance?.analysisEnabled=false}

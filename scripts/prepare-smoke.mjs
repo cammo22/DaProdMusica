@@ -6,7 +6,7 @@ await readFile('dist/index.html');
 const catalog=JSON.parse(await readFile('public/catalog.json','utf8'));
 const root='native-smoke/app/src/main';await mkdir(root+'/assets',{recursive:true});
 await cp('public/catalog.json',root+'/assets/catalog.json');
-for(const file of ['PlaybackService.kt','PlaybackWidget.kt','BackNavigation.kt','UpdateController.kt']){
+for(const file of ['PlaybackService.kt','PlaybackWidget.kt','BackNavigation.kt','UpdateController.kt','WebViewGestures.kt']){
  await cp('src-tauri/plugins/music/android/src/main/java/'+file,root+'/java/io/github/cammo22/smoke/'+file);
 }
 await cp('src-tauri/plugins/music/android/src/main/res',root+'/res',{recursive:true});

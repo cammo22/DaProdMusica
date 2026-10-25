@@ -90,6 +90,18 @@ class PlaybackSmokeTest {
      activity.setContentView(host)
      val widget = PlaybackWidget.buildViews(activity).apply(activity, host)
      host.addView(widget)
+     val cover = widget.findViewById<android.widget.ImageView>(R.id.widget_cover).drawable
+     assertTrue("Widget should show the embedded track cover", cover is android.graphics.drawable.BitmapDrawable)
+     assertEquals("Widget cover was not decoded at display resolution", 192, (cover as android.graphics.drawable.BitmapDrawable).bitmap.width)
+     val density = activity.resources.displayMetrics.density
+     widget.measure(android.view.View.MeasureSpec.makeMeasureSpec((264 * density).toInt(), android.view.View.MeasureSpec.EXACTLY), android.view.View.MeasureSpec.makeMeasureSpec((128 * density).toInt(), android.view.View.MeasureSpec.EXACTLY))
+     widget.layout(0, 0, widget.measuredWidth, widget.measuredHeight)
+     for (id in listOf(R.id.widget_prev, R.id.widget_play, R.id.widget_next)) {
+      val control = widget.findViewById<android.view.View>(id)
+      assertTrue("Widget transport icon is clipped at minimum width", control.width - control.paddingLeft - control.paddingRight >= 18 * density)
+     }
+     val coverView = widget.findViewById<android.view.View>(R.id.widget_cover)
+     assertTrue("Widget cover is clipped vertically", (coverView.parent as android.view.View).height <= widget.height - widget.paddingTop - widget.paddingBottom)
      frames = widget.findViewById(R.id.widget_frames)
      assertEquals("Playing widget must contain its complete animation", 24, frames.childCount)
      assertEquals(tracks.getJSONObject(0).getString("title"), widget.findViewById<TextView>(R.id.widget_title).text.toString())
@@ -133,6 +145,14 @@ class PlaybackSmokeTest {
     assertNull("Playback error: ${failure.get()}", failure.get())
    } finally {
     onMain { controller.release(); service.player.pause() }
+   }
+   context.stopService(Intent(context, PlaybackService::class.java))
+   await("Playback service did not stop after releasing the session") { PlaybackService.instance == null }
+   onMain {
+    val restored = PlaybackWidget.buildViews(context).apply(context, FrameLayout(context))
+    assertEquals("Cold widget lost the last song title", tracks.getJSONObject(1).getString("title"), restored.findViewById<TextView>(R.id.widget_title).text.toString())
+    val restoredCover = restored.findViewById<android.widget.ImageView>(R.id.widget_cover).drawable
+    assertTrue("Cold widget lost the embedded cover", restoredCover is android.graphics.drawable.BitmapDrawable)
    }
   }
  }

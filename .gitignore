@@ -26,3 +26,5 @@ native-smoke/app/src/main/res/
 
 
 native-smoke/effect-previews/
+
+native-smoke/app/src/main/java/io/github/cammo22/smoke/WebViewGestures.kt

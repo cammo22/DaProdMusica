@@ -3,6 +3,7 @@ export const vertexSource='attribute vec2 position; varying vec2 vUv; void main(
 export const displaySource='precision mediump float; varying vec2 vUv; uniform sampler2D image; void main(){gl_FragColor=texture2D(image,vUv);}';
 export function composeShader(common,body,id=''){
  const interaction=interactionCode(id);
+ const colorCenter=['daprod.liquid-chrome','daprod.inchiostro','musica.magnetic-garden','musica.memory-ribbon','musica.opal-caustics','musica.quantum-foam'].includes(id)?'uPointer':'uTouchOrigin';
  const uniforms=`uniform float uTime;uniform vec2 uPointer;uniform vec2 uTouchOrigin;uniform vec2 uTouchVelocity;uniform float uTouchAge;uniform float uTouch;uniform vec3 uTrackTint;uniform float uSeed;uniform float uEvolutionKaleido;uniform float uEvolutionZoom;uniform float uEvolutionWarp;uniform float uEvolutionHue;mat2 rot(float a);`;
  const transform=`p/=max(.4,uEvolutionZoom);vec2 focus=uPointer*vec2(uAspect*2.,2.);vec2 origin=uTouchOrigin*vec2(uAspect*2.,2.);vec2 delta=p-${id==='musica.aero-tides'?'origin':'focus'};
  ${interaction.coordinates}
@@ -14,7 +15,7 @@ export function composeShader(common,body,id=''){
  if(id==='daprod.electric-storm')scene=scene.replace('float x0 = (hash11(seed) - 0.5) * 2.4 * uAspect;','float x0 = mix((hash11(seed) - 0.5) * 2.4 * uAspect,uPointer.x*2.*uAspect,uTouch);');
  return header+'\n'+scene.replace('void main()', 'void sceneMain()')+`
  uniform sampler2D uPrevious; uniform float uFeedback;
- void main(){sceneMain();vec3 current=max(gl_FragColor.rgb,vec3(0.));vec2 touchDelta=(vUv-.5)*vec2(uAspect*2.,2.)-uTouchOrigin*vec2(uAspect*2.,2.);
+ void main(){sceneMain();vec3 current=max(gl_FragColor.rgb,vec3(0.));vec2 touchDelta=(vUv-.5)*vec2(uAspect*2.,2.)-${colorCenter}*vec2(uAspect*2.,2.);
  ${interaction.color}
  vec3 axis=normalize(vec3(1.));current=current*cos(uEvolutionHue)+cross(axis,current)*sin(uEvolutionHue)+axis*dot(axis,current)*(1.-cos(uEvolutionHue));
  current=max(current,vec3(0.));current=mix(current,current*(.45+uTrackTint),.18);current=current/(1.+current*.45);

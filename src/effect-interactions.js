@@ -29,7 +29,7 @@ const coordinate={
  'daprod.fractal-pulse':'p=focus+(p-focus)/(1.+uTouch*2.5);',
  'daprod.liquid-chrome':'p-=uTouchVelocity*uTouch*.035*exp(-dot(delta,delta)*5.);p+=delta/(.08+dot(delta,delta))*uTouch*.075;',
  'daprod.retro-grid':'p.y+=uPointer.y*uTouch*.8;p.x+=p.y*uPointer.x*uTouch*.65;',
- 'daprod.inchiostro':'p+=uTouchVelocity*uTouch*.09*exp(-dot(delta,delta)*2.);float turn=uTouch*exp(-dot(delta,delta)*2.)*(uTouchAge+1.)*3.;p=focus+mat2(cos(turn),-sin(turn),sin(turn),cos(turn))*delta;',
+ 'daprod.inchiostro':'float turn=uTouch*exp(-dot(delta,delta)*2.)*(uTouchAge+1.)*3.;p=focus+mat2(cos(turn),-sin(turn),sin(turn),cos(turn))*delta;p+=uTouchVelocity*uTouch*.09*exp(-dot(delta,delta)*2.);',
  'daprod.glitch-tape':'p.x+=uTouch*.3*sin(floor(p.y*30.)+uPointer.x*30.);',
  'daprod.minimal-rings':'p-=focus*uTouch;',
  'daprod.electric-storm':'p.x+=sin(p.y*12.+uTime*7.)*uTouch*.012;',
