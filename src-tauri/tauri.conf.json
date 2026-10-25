@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "DaProd Musica",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "identifier": "io.github.cammo22.daprodmusica",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -34,7 +34,7 @@
       "icons/128x128.png",
       "icons/icon.ico"
     ],
-    "shortDescription": "Ogni album, un universo.",
+    "shortDescription": "Musica, effetti interattivi e karaoke.",
     "category": "Music"
   }
 }

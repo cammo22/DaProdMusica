@@ -1,8 +1,8 @@
 // Original procedural renderer. Low frequencies change geometry, mids drive
 // turbulence, highs illuminate particles. Pointer bends the field, press adds force.
 export class FallbackVisualizer {
-  constructor(canvas, readAudio) {
-    this.canvas=canvas; this.ctx=canvas.getContext('2d',{alpha:false}); this.readAudio=readAudio;
+  constructor(canvas, readAudio, {manual=false}={}) {
+    this.manual=manual;this.canvas=canvas; this.ctx=canvas.getContext('2d',{alpha:false}); this.readAudio=readAudio;
     this.mode='Magma';this.intensity=0.65;this.quality=1;this.enabled=true;this.pointer={x:0,y:0,down:false};this.energy=0;this.t=0;this.last=0;
     this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();this.pointer.x=(e.clientX-r.left)/r.width-.5;this.pointer.y=(e.clientY-r.top)/r.height-.5;});
@@ -11,10 +11,10 @@ export class FallbackVisualizer {
     canvas.addEventListener('pointercancel',()=>this.pointer.down=false);
     canvas.addEventListener('pointerleave',()=>{this.pointer.down=false;});
     this.resize=new ResizeObserver(()=>this.size());this.resize.observe(canvas);this.size();
-    this.frame=this.frame.bind(this);requestAnimationFrame(this.frame);
+    this.frame=this.frame.bind(this);if(!this.manual)requestAnimationFrame(this.frame);
   }
   size(){const r=this.canvas.getBoundingClientRect();const d=Math.min(devicePixelRatio||1,1.5)*this.quality;this.canvas.width=Math.max(1,Math.round(r.width*d));this.canvas.height=Math.max(1,Math.round(r.height*d));}
-  frame(now){requestAnimationFrame(this.frame);if(document.hidden||!this.enabled||now-this.last<(this.reduced?100:30))return;
+  frame(now){if(!this.manual)requestAnimationFrame(this.frame);if(document.hidden||!this.enabled||now-this.last<(this.reduced?100:30))return;
     const dt=Math.min((now-this.last)/1000,.1);this.last=now;
     const {bass=0,mid=0,high=0}=this.readAudio();this.energy+=(bass-this.energy)*.18;
     this.t+=dt*(this.reduced?.12:.35+this.energy*.7);const t=this.t,c=this.ctx,w=this.canvas.width,h=this.canvas.height;

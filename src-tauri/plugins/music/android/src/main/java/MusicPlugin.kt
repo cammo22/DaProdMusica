@@ -10,29 +10,28 @@ import app.tauri.plugin.*
 import org.json.JSONArray
 
 @InvokeArg
-class ExecuteArgs { var op:String="state";var requestId:Long=0;var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f }
+class ExecuteArgs { var op:String="state";var requestId:Long=0;var items:String="[]";var index:Int=0;var position:Double=0.0;var enabled:Boolean=true;var volume:Float=1f;var url:String="";var digest:String="" }
 @UnstableApi
 @TauriPlugin
 class MusicPlugin(private val activity:Activity):Plugin(activity){
  companion object {
   var active:MusicPlugin?=null
-  @JvmStatic fun leave(activity:Activity){active?.pip?.leave()}
-  @JvmStatic fun pipChanged(value:Boolean){active?.pip?.modeChanged(value)}
+  @JvmStatic fun back(){BackNavigation.dispatch(active?.webView)}
  }
  private val handler=Handler(Looper.getMainLooper())
  private var uiAnalysis=false
  private var newestQueueRequest=0L
- private val pip=PipController(activity){uiAnalysis}
- override fun load(webView:WebView){active=this;pip.refresh()}
- override fun onResume(){PlaybackService.instance?.analysisEnabled=uiAnalysis||activity.isInPictureInPictureMode;pip.refresh()}
- override fun onPause(){PlaybackService.instance?.analysisEnabled=activity.isInPictureInPictureMode}
- override fun onDestroy(){handler.removeCallbacksAndMessages(null);pip.destroy();if(active===this)active=null}
- fun refreshPip(){pip.refresh()}
+ private var webView:WebView?=null
+ private val updates=UpdateController(activity)
+ override fun load(webView:WebView){active=this;this.webView=webView}
+ override fun onResume(){PlaybackService.instance?.analysisEnabled=uiAnalysis}
+ override fun onPause(){PlaybackService.instance?.analysisEnabled=false}
+ override fun onDestroy(){handler.removeCallbacksAndMessages(null);webView=null;if(active===this)active=null}
  @Command fun execute(invoke:Invoke){
   try{
    val args=invoke.parseArgs(ExecuteArgs::class.java)
-   if(args.op=="pip"){pip.updateEnabled(args.enabled);invoke.resolve(JSObject().apply{put("supported",pip.supported());put("enabled",pip.enabled)});return}
-   if(args.op=="enterPip"){if(pip.enter())invoke.resolve()else invoke.reject("PiP non disponibile: verifica il permesso nelle impostazioni Android.");return}
+   if(args.op.startsWith("update")){updates.execute(args.op,args.url,args.digest,{invoke.resolve(JSObject(it.toString()))},{invoke.reject(it)});return}
+   if(args.op=="widget"){invoke.resolve(JSObject().apply{put("supported",PlaybackWidget.pin(activity))});return}
    if(PlaybackService.instance==null){activity.startService(Intent(activity,PlaybackService::class.java));waitService(invoke,args,0)}else perform(invoke,args)
   }catch(error:Exception){invoke.reject(error.message?:"Comando audio non valido")}
  }
@@ -41,7 +40,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
   val service=PlaybackService.instance?:throw IllegalStateException("Player non avviato");val p=service.player
   if(args.op=="queue"){if(args.requestId<newestQueueRequest){invoke.resolve(JSObject(service.snapshot().toString()));return};newestQueueRequest=args.requestId}
   when(args.op){
-   "analysis"->{uiAnalysis=args.enabled;service.analysisEnabled=uiAnalysis||activity.isInPictureInPictureMode}
+   "analysis"->{uiAnalysis=args.enabled;service.analysisEnabled=uiAnalysis}
    "queue"->service.setQueue(JSONArray(args.items),args.index)
    "play"->{if(p.playbackState==Player.STATE_IDLE)p.prepare();service.error=null;p.play()}
    "pause"->p.pause()
@@ -51,8 +50,7 @@ class MusicPlugin(private val activity:Activity):Plugin(activity){
    "repeat"->p.repeatMode=if(args.enabled)Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
    "volume"->p.volume=args.volume.coerceIn(0f,1f)
   }
-  if(args.op!="state")pip.refresh()
-  val state=service.snapshot();if(args.op!="init"&&args.op!="queue")state.remove("queue");state.put("pipSupported",pip.supported());state.put("pipEnabled",pip.enabled);invoke.resolve(JSObject(state.toString()))
+  val state=service.snapshot();if(args.op!="init"&&args.op!="queue")state.remove("queue");invoke.resolve(JSObject(state.toString()))
  }catch(error:Exception){invoke.reject(error.message?:"Errore player")}}
 }
 

@@ -19,5 +19,8 @@ release-artifacts/
 *.p12
 *.pem
 
-native-smoke/app/src/main/java/io/github/cammo22/smoke/PipController.kt
+native-smoke/app/src/main/java/io/github/cammo22/smoke/PlaybackWidget.kt
+native-smoke/app/src/main/java/io/github/cammo22/smoke/BackNavigation.kt
+native-smoke/app/src/main/java/io/github/cammo22/smoke/UpdateController.kt
+native-smoke/app/src/main/res/
 

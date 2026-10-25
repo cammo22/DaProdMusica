@@ -1,4 +1,4 @@
-export const VERSION = '0.4.0';
+export const VERSION = '0.5.0';
 export function time(seconds) { const s = Math.max(0,Math.floor(Number(seconds)||0)); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 export function escapeHTML(value) { return String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 export function parseLRC(text) {

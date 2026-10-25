@@ -1,31 +1,32 @@
-# DaProd Musica 0.4.0
+# DaProd Musica 0.5.0
 
 Player Android, Windows e browser. [Download](https://github.com/cammo22/DaProdMusica/releases).
 
-## Modifiche della 0.4.0
+## Modifiche della 0.5.0
 
-- Corretto il blocco audio Android `Unexpected runtime error`: il processore PCM non deve ricopiare buffer vuoti riciclati da Media3. È stato riprodotto in un test Android prima della correzione.
-- UI più semplice: Galassia, Album e Preferiti sono tre pagine separate.
-- Galassia a sfera con copertine reali, rotazione tramite trascinamento e inerzia.
-- Player compatto espandibile con tap o trascinamento verso l'alto. Nell'espanso il titolo compare solo in alto.
-- Un pulsante Effetti: tap cambia effetto; pressione lunga attiva/disattiva il cambio automatico.
-- 22 effetti con interazioni specifiche, non una deformazione identica per tutti.
-- Colori ricavati dalle copertine e selezione dell'effetto iniziale in base ad album e brano.
-- Risorse dell'icona Android copiate esplicitamente nel progetto generato.
+- Galassia con effetti sullo sfondo e trascinamento che segue il dito.
+- Player espandibile, interfaccia ripulita e navigazione Galassia / Album / Preferiti.
+- Effetti: tap cambia, pressione lunga apre 22 anteprime reali e il selettore Shuffle. Ogni effetto ha una reazione specifica e persistente al tap.
+- PiP eliminato. Widget Home ridimensionabile con controlli e sei animazioni leggere casuali.
+- Indietro chiude i menu e riduce il player; Home mantiene la musica. Rimuovere l’app dal multitasking ferma la riproduzione.
+- Aggiornamenti Android scaricati dall’app, verificati con SHA-256, package, firma e versione. Android conserva la conferma finale di installazione.
+- DapGalleria nelle impostazioni.
 
 ## Android e verifiche
 
-Media3 ExoPlayer vive in un MediaSessionService, con focus audio, cuffie, notifica e persistenza della coda. Il PiP usa una vista nativa con copertina, animazione e controlli. La pillola e l'animazione del launcher dipendono dal telefono.
+Media3 ExoPlayer vive in un MediaSessionService con copertina, comandi di sistema, cuffie/Bluetooth, focus audio e coda persistente. La grafica del player di sistema e le eventuali pillole dipendono dal telefono.
 
-La release esegue un test Android su emulatore prima di compilare l'APK: riproduzione dei 47 file, seek, pausa/ripresa, background e controlli PiP. Firma, manifest, risorse audio e allineamento ELF a 16KB sono verificati separatamente. L'emulatore non sostituisce le prove sul telefono dell'utente.
+Il widget usa RemoteViews: il launcher riproduce piccoli fotogrammi Canvas, senza WebGL, analisi audio, overlay, timer del servizio o wake lock aggiuntivi. Gli effetti del widget sono varianti semplificate, non i 22 shader interattivi del player.
 
-Servono Android 8+ e ARM64. Gli aggiornamenti aprono la release GitHub; l'installazione interna non è ancora implementata. L'installer Windows non ha certificato Authenticode.
+La CI verifica tutti i 47 file audio, seek/pausa/ripresa, un MediaController reale in background, rendering e controlli del widget, il bridge Indietro e rifiuto degli aggiornamenti non validi. Firma, manifest, audio e allineamento ELF a 16KB sono verificati sul pacchetto. Questi test non sostituiscono la prova su telefono fisico o l’installazione completa di una futura release.
+
+Servono Android 8+ e ARM64. Da Impostazioni → Aggiornamenti si scaricano le nuove versioni senza aprire il browser; al primo utilizzo Android richiede di autorizzare questa app a installare pacchetti. Su Windows il menu apre la release; l’installer Windows non ha certificato Authenticode.
 
 ## Audio e karaoke
 
 Il catalogo contiene 47 brani in tre album, con 46 copertine incorporate negli MP3. Il brano senza immagine usa la copertina del suo album. Audio offline incluso nei pacchetti.
 
-Tutti i brani sono stati elaborati sul PC con RTX4060 e Systran/faster-whisper-small. `public/lyrics.json` contiene bozze con tempi per parola; `public/lyrics-report.json` il rapporto. Cantato e dialetti richiedono correzioni nello Studio. Il modello resta sul PC e non è incluso nell'APK.
+Tutti i brani sono stati elaborati sul PC con RTX4060 e Systran/faster-whisper-small. `public/lyrics.json` contiene bozze con tempi per parola; `public/lyrics-report.json` il rapporto. Cantato e dialetti richiedono correzioni nello Studio. Il modello resta sul PC e non Ã¨ incluso nell'APK.
 
 ```sh
 python -m venv .venv
@@ -51,4 +52,4 @@ Per aggiornare copertine/metadata: `npm run import:music -- percorso`, quindi `p
 
 Per le release: sorgenti puliti e pushati su main, poi `node scripts/prepare-release.mjs` con il login gh locale. Il comando prepara una bozza e avvia il workflow senza salvare token nel repository. Pubblicare dopo verifica degli allegati.
 
-I preset DaProdSuite e le scene 3D mantengono provenienza e licenza in `THIRD_PARTY.md`. Nessuna compatibilità con file .milk è dichiarata. Flatpak e hosting pubblico browser non sono distribuiti in questa versione.
+I preset DaProdSuite e le scene 3D mantengono provenienza e licenza in `THIRD_PARTY.md`. Nessuna compatibilitÃ  con file .milk Ã¨ dichiarata. Flatpak e hosting pubblico browser non sono distribuiti in questa versione.

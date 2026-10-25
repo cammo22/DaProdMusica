@@ -62,16 +62,31 @@ class PlaybackService:MediaSessionService(){
   player.setHandleAudioBecomingNoisy(true);player.setWakeMode(C.WAKE_MODE_LOCAL)
   val launch=packageManager.getLaunchIntentForPackage(packageName)!!
   val intent=PendingIntent.getActivity(this,0,launch,PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-  session=MediaSession.Builder(this,player).setSessionActivity(intent).build()
+  session=MediaSession.Builder(this,player).setSessionActivity(intent).setCallback(object:MediaSession.Callback{
+   override fun onPlaybackResumption(session:MediaSession,controller:MediaSession.ControllerInfo,isForPlayback:Boolean):com.google.common.util.concurrent.ListenableFuture<MediaSession.MediaItemsWithStartPosition>{
+    ensureQueue()
+    val items=(0 until player.mediaItemCount).map{player.getMediaItemAt(it)}
+    return com.google.common.util.concurrent.Futures.immediateFuture(MediaSession.MediaItemsWithStartPosition(items,player.currentMediaItemIndex.coerceAtLeast(0),player.currentPosition))
+   }
+  }).build()
   player.addListener(object:Player.Listener{
-   override fun onEvents(p:Player,events:Player.Events){persist();MusicPlugin.active?.refreshPip()}
+   override fun onEvents(p:Player,events:Player.Events){persist();PlaybackWidget.update(this@PlaybackService)}
    override fun onPlayerError(e:PlaybackException){error=generateSequence(e as Throwable?){it.cause}.joinToString("\n"){"${it.javaClass.simpleName}: ${it.message}"};android.util.Log.e("DaProdPlayback","Playback failed",e)}
   })
   val saved=getSharedPreferences("dap-playback",MODE_PRIVATE)
   try{val raw=saved.getString("queue",null);val index=saved.getInt("index",0);val position=saved.getLong("position",0);if(raw!=null)setQueue(JSONArray(raw),index,false,position)}catch(_:Exception){}
+  ensureQueue()
   worker.scheduleAtFixedRate({val frame=pending.getAndSet(null);if(analysisEnabled&&frame!=null)analyse(frame)},0,50,TimeUnit.MILLISECONDS)
   main.postDelayed(checkpoint,10000)
  }
+ fun ensureQueue(){
+  if(player.mediaItemCount>0)return
+  try{val catalog=JSONObject(assets.open("catalog.json").bufferedReader().use{it.readText()});val albums=catalog.getJSONArray("albums");val tracks=ArrayList<JSONObject>()
+   for(a in 0 until albums.length()){val album=albums.getJSONObject(a);val list=album.getJSONArray("tracks");for(i in 0 until list.length()){val row=list.getJSONObject(i);row.put("album",album.getString("title"));row.put("albumId",album.getString("id"));tracks.add(row)}}
+   tracks.shuffle();setQueue(JSONArray(tracks),0,false)
+  }catch(e:Exception){android.util.Log.w("DaProdPlayback","Catalog unavailable",e)}
+ }
+ override fun onTaskRemoved(rootIntent:Intent?){player.pause();stopSelf()}
  fun setQueue(items:JSONArray,index:Int,play:Boolean=true,position:Long=0){
   val list=ArrayList<MediaItem>()
   for(i in 0 until items.length()){
@@ -106,7 +121,7 @@ class PlaybackService:MediaSessionService(){
   features=JSONObject().put("sequence",++featureSequence).put("capturedAt",android.os.SystemClock.elapsedRealtime()).put("bass",average(0,19)).put("mid",average(20,42)).put("treble",average(43,63)).put("rms",rms).put("peak",x.maxOf{abs(it)}).put("energy",total/64).put("centroid",if(total>0)weighted/total else 0).put("beat",if(beat)1 else 0).put("beatCount",beatCount).put("onset",min(1.0,flux*10)).put("bands",spectrum).put("waveform",wave)
  }
  override fun onGetSession(info:MediaSession.ControllerInfo):MediaSession?=session
- override fun onDestroy(){main.removeCallbacks(checkpoint);persist();worker.shutdownNow();player.release();session?.release();instance=null;super.onDestroy()}
+ override fun onDestroy(){main.removeCallbacks(checkpoint);persist();worker.shutdownNow();player.release();session?.release();instance=null;PlaybackWidget.update(this);super.onDestroy()}
 }
 
 

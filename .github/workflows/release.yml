@@ -83,7 +83,8 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$output" > release-artifacts/Android-package.txt
           python3 scripts/check-apk.py "$output"
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump xmltree "$output" AndroidManifest.xml > release-artifacts/Android-manifest.txt
-          grep -q 'supportsPictureInPicture' release-artifacts/Android-manifest.txt
+          if grep -q 'supportsPictureInPicture' release-artifacts/Android-manifest.txt; then exit 1; fi
+          grep -q 'io.github.cammo22.music.PlaybackWidget' release-artifacts/Android-manifest.txt
           grep -q 'io.github.cammo22.music.PlaybackService' release-artifacts/Android-manifest.txt
           grep -q 'FOREGROUND_SERVICE_MEDIA_PLAYBACK' release-artifacts/Android-manifest.txt
           if grep -q application-debuggable release-artifacts/Android-package.txt; then exit 1; fi
