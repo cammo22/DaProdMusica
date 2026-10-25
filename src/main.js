@@ -55,15 +55,17 @@ function controlsState(){$('#effects-shuffle').checked=visual.auto;$('#effects-l
 function setAutomatic(value){visual.auto=value;if(value){effectLocked=false;store('dap-effect-lock',false);}visual.evolveAt=visual.time+visual.interval;store('dap-effect-shuffle',value);controlsState();}
 function nextEffect(){visual.mode=randomEffect(visual.mode,allPresets);visual.genome=null;visual.transition=1;visual.touchAt=-100000;saveEffect();updateVisual();}
 function chooseEffect(id){visual.mode=id;visual.genome=null;visual.transition=1;visual.touchAt=-100000;saveEffect();$('#effects-dialog').close();updateVisual();toast(effectDescription(id));}
+// Representative spectrum for the actual shader thumbnail, independent of playback.
+function previewSignal(){const spectrum=new Uint8Array(256),wave=new Uint8Array(1024);for(let i=0;i<64;i++){const level=100+Math.sin(i*.43)**2*105;spectrum.set([level,level,level,255],i*4);}for(let i=0;i<256;i++){const v=128+Math.sin(i*.12)*70;wave.set([v,v,v,255],i*4);}return {bass:.55,mid:.4,treble:.3,centroid:.42,energy:.4,rms:.35,beat:.2,onset:.12,spectrum,wave};}
 async function renderPreview(){
  if(previewWorking)return;previewWorking=true;
  while(previewQueue.length&&$('#effects-dialog').open){
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   const img=previewQueue.shift();if(!img?.isConnected||!$('#effects-dialog').open)break;
   try{
-   if(!previews)previews=new Visualizer($('#preview-renderer'),()=>({bass:.42,mid:.35,treble:.2,energy:.35,rms:.3,beat:0,onset:0}),message=>{previewFailure=message;},{manual:true});
+   if(!previews){const signal=previewSignal();previews=new Visualizer($('#preview-renderer'),()=>signal,message=>{previewFailure=message;},{manual:true});}
    if(!previews.gl){previews.enabled=false;break;}
-   previewFailure=null;previews.mode=img.dataset.preview;previews.enabled=true;previews.time=12;previews.tint=visual.tint;previews.transition=0;previews.genome=null;previews.size();previews.frame(performance.now());
+   previewFailure=null;previews.mode=img.dataset.preview;previews.enabled=true;previews.time=12;previews.tint=visual.tint;previews.transition=0;previews.genome=null;previews.size();for(let frame=0;frame<6;frame++)previews.frame(performance.now()+frame*33);
    if(previewFailure)throw Error(previewFailure);const data=previews.canvas.toDataURL('image/png');previewCache.set(img.dataset.preview,data);img.onerror=null;img.src=data;
   }catch{img.alt='Anteprima non disponibile';}finally{previews?.releaseScenes?.();}
  }
@@ -95,7 +97,7 @@ document.querySelectorAll('dialog').forEach(dialog=>{bindDialogDismiss(dialog);d
 $('#motion').value=read('dap-motion',matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full');
 $('#motion').onchange=e=>{visual.setMotion?.(e.target.value);visual.reduced=e.target.value==='reduced';engine.visualMode=e.target.value;if(galaxy){galaxy.motion=e.target.value;galaxy.reduce=e.target.value==='reduced';}store('dap-motion',e.target.value);updateVisual();};$('#motion').dispatchEvent(new Event('change'));
 $('#karaoke-toggle').onchange=e=>{$('#karaoke').hidden=!e.target.checked;};
-$('#widget-add').onclick=()=>engine.command('widget').then(r=>{toast(r.pinned?'Widget già presente nella Home.':r.requested?'Conferma l’aggiunta nella schermata del launcher.':'Tieni premuto sulla Home → Widget → DaProd Musica.');}).catch(()=>toast('Tieni premuto sulla Home → Widget → DaProd Musica.'));
+$('#widget-add').onclick=()=>engine.command('widget').then(r=>{toast(r.requested?'Conferma l’aggiunta nella schermata del launcher.':r.pinned?'Widget già presente nella Home.':'Tieni premuto sulla Home → Widget → DaProd Musica.');}).catch(()=>toast('Tieni premuto sulla Home → Widget → DaProd Musica.'));
 setupCompanion(engine,updateVisual,toast);
 let availableAsset=null,downloadStatus='idle',updateTimer;
 function downloadUI(s){downloadStatus=s.status;const loading=['downloading','waiting'].includes(s.status),ready=s.status==='ready';$('#update-progress').hidden=!loading;$('#update-progress').value=s.progress||0;$('#update-install').disabled=loading;$('#update-install').hidden=!availableAsset&&!ready;$('#update-install').textContent=ready?'Installa aggiornamento':'Scarica aggiornamento';if(loading)$('#update-status').textContent=s.status==='waiting'?'In attesa della rete…':`Download · ${s.progress||0}%`;if(ready)$('#update-status').textContent='Download verificato. Pronto per installare.';if(s.status==='failed')$('#update-status').textContent='Download non riuscito. Puoi riprovare.';}

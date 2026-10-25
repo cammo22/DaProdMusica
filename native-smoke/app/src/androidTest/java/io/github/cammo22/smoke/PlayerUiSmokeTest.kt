@@ -123,18 +123,19 @@ class PlayerUiSmokeTest {
   ActivityScenario.launch(PlayerSmokeActivity::class.java).use { screen ->
    openPlayer(screen)
    holdEffects(screen, .3) // Touch the actual SVG child, not only the button label.
+   await(screen, "Visible effect cards did not load", "Array.from(document.querySelectorAll('[data-preview]')).slice(0,2).every(e=>e.complete&&e.naturalWidth>=96)")
    capture(screen, "effects")
    assertEquals("All production effects must be selectable", "22", js(screen, "document.querySelectorAll('#effect-grid [data-effect]').length"))
    assertEquals("A hold must not silently turn on shuffle", "false", js(screen, "document.querySelector('#effects-shuffle').checked"))
    val selected = js(screen, "document.querySelector('#effect-grid [aria-pressed=true]')?.dataset.effect")
    point(screen, "#effects-shuffle")
    tap(screen, "#effects-shuffle")
-   assertEquals("Shuffle did not respond to a finger tap inside the modal", "true", js(screen, "document.querySelector('#effects-shuffle').checked"))
+   await(screen, "Shuffle did not respond to a finger tap inside the modal", "document.querySelector('#effects-shuffle').checked")
    assertEquals("true", js(screen, "JSON.parse(localStorage.getItem('dap-effect-shuffle'))"))
    tap(screen, "#effects-lock")
-   assertEquals("Lock and shuffle must be mutually exclusive", "true", js(screen, "document.querySelector('#effects-lock').checked && !document.querySelector('#effects-shuffle').checked"))
+   await(screen, "Lock and shuffle must be mutually exclusive", "document.querySelector('#effects-lock').checked && !document.querySelector('#effects-shuffle').checked")
    tap(screen, "#effects-shuffle")
-   assertEquals("Shuffle must release the effect lock", "true", js(screen, "!document.querySelector('#effects-lock').checked && document.querySelector('#effects-shuffle').checked"))
+   await(screen, "Shuffle must release the effect lock", "!document.querySelector('#effects-lock').checked && document.querySelector('#effects-shuffle').checked")
    screen.onActivity { BackNavigation.dispatch(it.playerView) }
    await(screen, "Native back did not close just the modal", "!document.querySelector('#effects-dialog').open && document.body.classList.contains('expanded')")
    holdEffects(screen, .75) // Long-press the text child on a second invocation.

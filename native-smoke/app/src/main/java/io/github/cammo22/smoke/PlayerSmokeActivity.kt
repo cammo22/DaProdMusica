@@ -34,15 +34,6 @@ class PlayerSmokeActivity : Activity() {
    }
   }
   playerView.webViewClient = object : WebViewClient() {
-   private var bootstrapped = false
-   override fun onPageFinished(view: WebView, url: String) {
-    if (!bootstrapped) {
-     bootstrapped = true
-     view.evaluateJavascript("localStorage.clear()") {
-      view.loadUrl("https://appassets.androidplatform.net/index.html")
-     }
-    }
-   }
    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse {
     val uri = request.url
     if (uri.scheme != "https" || uri.host != "appassets.androidplatform.net")
@@ -50,6 +41,10 @@ class PlayerSmokeActivity : Activity() {
     val relative = Uri.decode(uri.path.orEmpty()).removePrefix("/")
     if (relative.split('/').any { it == ".." } || relative.isEmpty())
      return response("text/plain", 404, "Not found", ByteArrayInputStream(byteArrayOf()))
+    if (relative == "__bootstrap.html") {
+     val html = "<!doctype html><script>localStorage.clear();location.replace('/index.html')</script>"
+     return response("text/html", 200, "OK", ByteArrayInputStream(html.toByteArray(Charsets.UTF_8)))
+    }
     val path = if (relative.startsWith("media/") || relative.startsWith("artwork/")) relative else "player/$relative"
     return try {
      response(mime(path), 200, "OK", assets.open(path))
@@ -61,7 +56,7 @@ class PlayerSmokeActivity : Activity() {
   setContentView(playerView)
   // Clear persistent UI preferences before each scenario without altering the
   // application bundle or injecting alternate controls/event handlers.
-  playerView.loadDataWithBaseURL("https://appassets.androidplatform.net/", "<script>localStorage.clear()</script>", "text/html", "UTF-8", null)
+  playerView.loadUrl("https://appassets.androidplatform.net/__bootstrap.html")
  }
 
  private fun response(type: String, status: Int, reason: String, data: java.io.InputStream) =
