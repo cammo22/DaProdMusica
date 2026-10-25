@@ -17,3 +17,5 @@ Il widget usa [RemoteViews](https://developer.android.com/develop/ui/views/appwi
 ## Verifica
 
 I test Android avviano il player Vite reale nella WebView con MotionEvent touch: pressione lunga sul controllo Effetti, rilascio, scelta delle card, aperture successive, anteprime, tap sul backdrop e trascinamento del player con verifica della sua posizione durante il gesto. Una suite separata decodifica tutti i 47 brani, esercita MediaController in background e applica le RemoteViews del widget. L’emulatore verifica funzionalità, non misura prestazioni rappresentative di un telefono fisico.
+
+La CI usa SwiftShader con Vulkan disabilitato per la compatibilità della WebView, seguendo la [guida Android sui problemi grafici dell’emulatore](https://developer.android.com/studio/run/emulator-troubleshooting). I PNG generati vengono conservati anche se un test successivo interrompe l’emulatore.

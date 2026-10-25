@@ -51,6 +51,23 @@ class PlayerUiSmokeTest {
   fail("$message\nDOM: ${js(screen, "document.body.innerText.slice(-1800)")}\nConsole: $console")
  }
 
+ private fun capture(screen: ActivityScenario<PlayerSmokeActivity>, name: String) {
+  val done = CountDownLatch(1)
+  val result = java.util.concurrent.atomic.AtomicInteger(-1)
+  lateinit var bitmap: Bitmap
+  screen.onActivity { activity ->
+   val view = activity.window.decorView
+   bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+   android.view.PixelCopy.request(activity.window, bitmap, { result.set(it); done.countDown() }, android.os.Handler(android.os.Looper.getMainLooper()))
+  }
+  assertTrue("Capture did not complete", done.await(10, TimeUnit.SECONDS))
+  assertEquals(android.view.PixelCopy.SUCCESS, result.get())
+  val context = InstrumentationRegistry.getInstrumentation().targetContext
+  val folder = File(context.getExternalFilesDir(null), "ui-captures").apply { mkdirs() }
+  try { File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+  finally { bitmap.recycle() }
+ }
+
  private fun ready(screen: ActivityScenario<PlayerSmokeActivity>) {
   await(screen, "Production player did not load its full catalog",
    "document.querySelectorAll('[data-accessible]').length===47 && !!document.querySelector('#mini-open')")
@@ -106,6 +123,7 @@ class PlayerUiSmokeTest {
   ActivityScenario.launch(PlayerSmokeActivity::class.java).use { screen ->
    openPlayer(screen)
    holdEffects(screen, .3) // Touch the actual SVG child, not only the button label.
+   capture(screen, "effects")
    assertEquals("All production effects must be selectable", "22", js(screen, "document.querySelectorAll('#effect-grid [data-effect]').length"))
    assertEquals("A hold must not silently turn on shuffle", "false", js(screen, "document.querySelector('#effects-shuffle').checked"))
    val selected = js(screen, "document.querySelector('#effect-grid [aria-pressed=true]')?.dataset.effect")
@@ -163,6 +181,7 @@ class PlayerUiSmokeTest {
    ready(screen)
    tap(screen, "#settings")
    await(screen, "Settings did not open", "document.querySelector('#preferences').open")
+   capture(screen, "settings")
    assertEquals("Obsolete volume/intensity controls are still present", "false", js(screen, "!!document.querySelector('#volume,#intensity')"))
    assertEquals("Unexpected movement choices", "[\"Fluido\",\"Risparmio energia\",\"Off\"]", js(screen, "Array.from(document.querySelector('#motion').options,o=>o.text)"))
    val down = SystemClock.uptimeMillis()
@@ -184,6 +203,7 @@ class PlayerUiSmokeTest {
    }
    val displacement = js(screen, "new DOMMatrixReadOnly(getComputedStyle(document.querySelector('#expanded-player')).transform).m42").toDouble()
    assertTrue("Player does not follow the finger: $displacement", displacement > height * .36 && displacement < height * .44)
+   capture(screen, "player-drag")
    assertEquals("Player collapsed before the finger was released", "true", js(screen, "document.body.classList.contains('expanded')"))
    val stage = js(screen, "new DOMMatrixReadOnly(getComputedStyle(document.querySelector('#effect-stage')).transform).m42").toDouble()
    assertEquals("Effects and controls must move together", displacement, stage, 2.0)

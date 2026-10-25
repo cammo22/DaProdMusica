@@ -7,3 +7,15 @@ test('The native adapter never starts HTML audio and ignores stale queue replies
 test('The browser engine stops sound at the end of a non-repeating queue',async()=>{const engine=new AudioEngine();engine.setup=async()=>{};await engine.setQueue([a]);engine.repeat=false;await engine.next();assert.equal(engine.audio.paused,true);assert.equal(engine.playing,false);});
 test('Native state reattaches to the existing ordered queue',()=>{const engine=new AudioEngine();engine.native=true;engine.apply({queue:[b,a],index:1,position:42,duration:120,playing:true});assert.equal(engine.current.id,'a');assert.equal(engine.position,42);engine.apply({index:0,position:3,playing:true});assert.equal(engine.current.id,'b');assert.equal(engine.queue.length,2);});
 
+
+test('A native poll started before selecting another album cannot overwrite the new queue',async()=>{
+ const engine=new AudioEngine();engine.native=true;engine.polling=true;
+ const savedTimer=globalThis.setTimeout,savedDocument=globalThis.document,timers=[];
+ globalThis.document={hidden:false};globalThis.setTimeout=fn=>{timers.push(fn);return 1;};
+ try{
+  let reply;engine.command=op=>op==='state'?new Promise(resolve=>reply=resolve):Promise.resolve({queue:[b],index:0,playing:true});
+  engine.schedule();const polling=timers.shift()();
+  await engine.setQueue([b]);reply({queue:[a],index:0,playing:false});await polling;
+  assert.equal(engine.current.id,'b');assert.equal(engine.playing,true);
+ }finally{globalThis.setTimeout=savedTimer;globalThis.document=savedDocument;}
+});

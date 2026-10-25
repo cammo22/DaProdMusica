@@ -43,8 +43,8 @@ jobs:
           disable-animations: true
           ram-size: 2048M
           cores: 2
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
-          script: bash -c 'gradle -p native-smoke connectedDebugAndroidTest --no-daemon --stacktrace; result=$?; adb pull /sdcard/Android/data/io.github.cammo22.smoke/files/effect-previews native-smoke/effect-previews || true; exit "$result"'
+          emulator-options: -no-window -gpu swiftshader -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: bash scripts/run-android-smoke.sh
       - if: always()
         run: sudo dmesg | tail -100 > native-smoke/emulator-host.log
       - if: always()
@@ -56,3 +56,4 @@ jobs:
             native-smoke/app/build/outputs/androidTest-results/
             native-smoke/effect-previews/
             native-smoke/emulator-host.log
+            native-smoke/ui-captures/

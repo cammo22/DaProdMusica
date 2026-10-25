@@ -21,3 +21,15 @@ test('All twenty fragment scenes have distinct coordinate and color interactions
  assert.equal(new Set(codes.map(c=>c.color)).size,20);
 });
 test('Random effect selection changes the current effect and tracks choose an album-specific default',()=>{for(const p of manifests)assert.notEqual(randomEffect(p.id,manifests,()=>.5),p.id);const track={id:'643d82de7ba99094'};const ids=['vesuvio','sistema','selecta'].map(art=>effectForTrack({art},track,manifests));assert.equal(new Set(ids).size,3);assert.equal(effectForTrack({art:'vesuvio'},track,manifests),ids[0]);});
+
+test('Default gesture timers retain the Window-compatible receiver',()=>{
+ const originalSet=globalThis.setTimeout,originalClear=globalThis.clearTimeout;let timer,held=0,next=0;
+ const validReceiver=value=>assert.ok(value===undefined||value===globalThis,'Browser timers reject a clock object as their receiver');
+ globalThis.setTimeout=function(fn){validReceiver(this);timer=fn;return 17;};
+ globalThis.clearTimeout=function(){validReceiver(this);};
+ try{
+  const button=new EventTarget();bindEffectButton(button,{hold:()=>held++,next:()=>next++});
+  button.dispatchEvent(new Event('pointerdown'));timer();button.dispatchEvent(new Event('pointerup'));button.dispatchEvent(new Event('click'));
+  assert.equal(held,1);assert.equal(next,0);
+ }finally{globalThis.setTimeout=originalSet;globalThis.clearTimeout=originalClear;}
+});

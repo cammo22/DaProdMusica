@@ -1,6 +1,6 @@
 /** Touch-safe tap/hold: Android can cancel a pointer when its native context menu
  * wins. Finish a matured hold on contextmenu too; never turn release into a tap. */
-export function bindEffectButton(element,{next,hold,toggle,delay=420,clock={set:setTimeout,clear:clearTimeout,now:()=>performance.now()}}){
+export function bindEffectButton(element,{next,hold,toggle,delay=420,clock={set:(fn,ms)=>setTimeout(fn,ms),clear:id=>clearTimeout(id),now:()=>performance.now()}}){
  const open=hold||toggle;let timer=null,pointer=null,held=false,suppress=false,started=0,startX=0,startY=0;
  const now=()=>clock.now?.()??performance.now();
  const clear=()=>{if(timer!==null)clock.clear(timer);timer=null;};
