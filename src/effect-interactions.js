@@ -52,7 +52,7 @@ const color={
  'daprod.liquid-chrome':'float lens=exp(-dot(touchDelta,touchDelta)*28.);current+=uTouch*lens*vec3(.6,.8,1.);',
  'daprod.retro-grid':'current+=vec3(.5,.1,.7)*uTouch*exp(-abs(touchDelta.y)*50.);',
  'daprod.inchiostro':'float ink=exp(-dot(touchDelta,touchDelta)*(12.-uTouch*5.));current=mix(current,vec3(.025,.015,.07),ink*uTouch*.9);',
- 'daprod.glitch-tape':'current.rb+=uTouch*exp(-abs(vUv.y-(.5-uPointer.y))*40.)*vec2(.35,.7);',
+ 'daprod.glitch-tape':'current.rb+=uTouch*exp(-abs(vUv.y-(uPointer.y+.5))*40.)*vec2(.35,.7);',
  'daprod.minimal-rings':'float orbit=abs(length(touchDelta)-.12-uTouchAge*.35);current+=vec3(.6,.9,.85)*exp(-orbit*160.)*exp(-uTouchAge);',
  'daprod.electric-storm':'float bolt=touchDelta.x-sin(touchDelta.y*19.+floor(uTime*12.))*.045;current+=vec3(.4,.6,1.)*uTouch*exp(-abs(bolt)*120.);',
  'daprod.napoli-lava':'float crater=length(touchDelta);current+=vec3(1.,.17,.01)*uTouch*(exp(-abs(crater-.14-uTouchAge*.08)*38.)+exp(-crater*7.));',

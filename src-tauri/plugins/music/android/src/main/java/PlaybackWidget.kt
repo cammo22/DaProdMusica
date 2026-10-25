@@ -21,9 +21,10 @@ class PlaybackWidget:AppWidgetProvider() {
   if(intent.action==EFFECT){seed=Random.nextInt();frames=null;update(context)}
   if(intent.action==CONTROL){
    val action=intent.getStringExtra("command")?:"toggle"
-   val token=androidx.media3.session.SessionToken(context,ComponentName(context,PlaybackService::class.java))
+   val app=context.applicationContext
+   val token=androidx.media3.session.SessionToken(app,ComponentName(app,PlaybackService::class.java))
    val pending=goAsync()
-   val future=androidx.media3.session.MediaController.Builder(context,token).buildAsync()
+   val future=androidx.media3.session.MediaController.Builder(app,token).buildAsync()
    future.addListener({
     try{val p=future.get();if(p.mediaItemCount>0)when(action){
      "next"->p.seekToNextMediaItem()
@@ -31,7 +32,7 @@ class PlaybackWidget:AppWidgetProvider() {
      else->if(p.playWhenReady)p.pause()else{if(p.playbackState==Player.STATE_IDLE)p.prepare();p.play()}
     }}catch(e:Exception){android.util.Log.w("DaProdWidget","Controller unavailable",e)}
     finally{androidx.media3.session.MediaController.releaseFuture(future);pending.finish()}
-   },androidx.core.content.ContextCompat.getMainExecutor(context))
+   },androidx.core.content.ContextCompat.getMainExecutor(app))
   }
  }
  companion object{
