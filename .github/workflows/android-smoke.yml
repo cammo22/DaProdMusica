@@ -7,7 +7,11 @@ permissions:
 jobs:
   playback:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [native, previews, effects, sheet]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +40,8 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - run: gradle -p native-smoke assembleDebug assembleDebugAndroidTest --no-daemon
       - uses: reactivecircus/android-emulator-runner@v2
+        env:
+          SCENARIO: ${{ matrix.scenario }}
         with:
           api-level: 35
           target: google_apis
@@ -50,10 +56,11 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: android-playback-test-results
+          name: android-playback-test-results-${{ matrix.scenario }}
           path: |
             native-smoke/app/build/reports/androidTests/
             native-smoke/app/build/outputs/androidTest-results/
             native-smoke/effect-previews/
             native-smoke/emulator-host.log
+            native-smoke/artifact-copy.log
             native-smoke/ui-captures/

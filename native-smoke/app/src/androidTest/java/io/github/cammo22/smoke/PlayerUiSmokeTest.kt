@@ -58,7 +58,13 @@ class PlayerUiSmokeTest {
   screen.onActivity { activity ->
    val view = activity.window.decorView
    bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-   android.view.PixelCopy.request(activity.window, bitmap, { result.set(it); done.countDown() }, android.os.Handler(android.os.Looper.getMainLooper()))
+   activity.playerView.postVisualStateCallback(0, object: android.webkit.WebView.VisualStateCallback() {
+    override fun onComplete(requestId: Long) {
+     view.postOnAnimation { view.postOnAnimation {
+      android.view.PixelCopy.request(activity.window, bitmap, { result.set(it); done.countDown() }, android.os.Handler(android.os.Looper.getMainLooper()))
+     } }
+    }
+   })
   }
   assertTrue("Capture did not complete", done.await(10, TimeUnit.SECONDS))
   assertEquals(android.view.PixelCopy.SUCCESS, result.get())
