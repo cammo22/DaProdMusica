@@ -2,7 +2,7 @@ plugins { id("com.android.application"); id("org.jetbrains.kotlin.android") }
 android {
  namespace = "io.github.cammo22.music"
  compileSdk = 37
- defaultConfig { applicationId="io.github.cammo22.smoke"; minSdk=26; targetSdk=37; testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner" }
+ defaultConfig { applicationId="io.github.cammo22.smoke"; versionCode=5; minSdk=26; targetSdk=37; testInstrumentationRunner="androidx.test.runner.AndroidJUnitRunner" }
  compileOptions { sourceCompatibility=JavaVersion.VERSION_17;targetCompatibility=JavaVersion.VERSION_17 }
  kotlinOptions { jvmTarget="17" }
  androidResources { noCompress += listOf("mp3") }

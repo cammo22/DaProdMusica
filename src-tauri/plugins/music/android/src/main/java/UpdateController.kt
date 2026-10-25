@@ -43,7 +43,7 @@ class UpdateController(private val activity:Activity){
        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
        .setDestinationInExternalFilesDir(activity,"updates","daprod-update.apk")
       val id=downloads.enqueue(request)
-      prefs.edit().putLong("id",id).putString("digest",digest.removePrefix("sha256:").lowercase()).apply()
+      prefs.edit().putLong("id",id).putString("digest",digest.removePrefix("sha256:").lowercase()).remove("verifiedVersion").apply()
       JSONObject().put("status","downloading").put("progress",0)
      }
      "updateInstall"->{verify();activity.runOnUiThread{
@@ -65,7 +65,16 @@ class UpdateController(private val activity:Activity){
    }catch(e:Exception){activity.runOnUiThread{fail(e.message?:"Aggiornamento non disponibile.")}}
   }
  }
+ @Suppress("DEPRECATION")
  private fun state():JSONObject{
+  val current=activity.packageManager.getPackageInfo(activity.packageName,0)
+  val currentCode=if(Build.VERSION.SDK_INT>=28)current.longVersionCode else current.versionCode.toLong()
+  val downloadedVersion=prefs.getLong("verifiedVersion",0)
+  if(downloadedVersion>0&&downloadedVersion<=currentCode){
+   val old=prefs.getLong("id",-1);if(old!=-1L)downloads.remove(old)
+   prefs.edit().clear().apply();file.delete();verifiedPath=""
+   return JSONObject().put("status","idle")
+  }
   val id=prefs.getLong("id",-1);if(id==-1L)return JSONObject().put("status","idle")
   downloads.query(DownloadManager.Query().setFilterById(id)).use{cursor->
    if(!cursor.moveToFirst())return JSONObject().put("status","idle")
@@ -96,6 +105,10 @@ class UpdateController(private val activity:Activity){
   val signatures=if(Build.VERSION.SDK_INT>=28)apk.signingInfo?.apkContentsSigners else apk.signatures
   val local=if(Build.VERSION.SDK_INT>=28)installed.signingInfo?.apkContentsSigners else installed.signatures
   require(!signatures.isNullOrEmpty()&&!local.isNullOrEmpty()&&signatures.size==local.size&&signatures.toSet()==local.toSet()){"Firma dellâ€™aggiornamento non riconosciuta."}
+  prefs.edit().putLong("verifiedVersion",apkCode).apply()
   verifiedPath=identity
  }
 }
+
+// A distinct manifest component prevents merging into Tauri’s own file provider.
+class UpdateFileProvider:FileProvider()

@@ -1,5 +1,6 @@
 package io.github.cammo22.smoke
 
+import android.os.Build
 import androidx.core.content.FileProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -62,6 +63,22 @@ class UpdateSmokeTest {
    val idle = call("updateState")
    assertNull(idle.second)
    assertEquals("idle", idle.first!!.getString("status"))
+   @Suppress("DEPRECATION")
+   val installed = context.packageManager.getPackageInfo(context.packageName, 0)
+   @Suppress("DEPRECATION")
+   val installedCode = if (Build.VERSION.SDK_INT >= 28) installed.longVersionCode else installed.versionCode.toLong()
+   assertTrue("Smoke fixture needs an installed version for update cleanup", installedCode > 1)
+   try {
+    for (version in listOf(installedCode, installedCode - 1)) {
+     apk.parentFile!!.mkdirs(); apk.writeBytes(byteArrayOf(1, 2, 3))
+     prefs.edit().putLong("verifiedVersion", version).putString("digest", "stale").commit()
+     val cleared = call("updateState")
+     assertNull(cleared.second)
+     assertEquals("idle", cleared.first!!.getString("status"))
+     assertTrue("Installed update preferences were retained", prefs.all.isEmpty())
+     assertFalse("Installed update APK was retained", apk.exists())
+    }
+   } finally { apk.delete(); prefs.edit().clear().commit() }
    assertNotNull("Unsafe download should fail before enqueueing", call("updateDownload", "https://example.org/file.apk", digest).second)
    assertEquals(-1L, context.getSharedPreferences("dap-update", 0).getLong("id", -1))
    assertNotNull("Missing APK should fail before opening the installer", call("updateInstall").second)
