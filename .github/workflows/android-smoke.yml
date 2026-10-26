@@ -43,13 +43,13 @@ jobs:
         env:
           SCENARIO: ${{ matrix.scenario }}
         with:
-          api-level: ${{ matrix.scenario == 'native' && 35 || 33 }}
+          api-level: 35
           target: google_apis
           arch: x86_64
           disable-animations: true
           ram-size: 2048M
           cores: 2
-          emulator-options: -no-window -gpu swiftshader -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          emulator-options: -no-window -gpu swangle -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           script: bash scripts/run-android-smoke.sh
       - if: always()
         run: sudo dmesg | tail -100 > native-smoke/emulator-host.log
@@ -63,4 +63,5 @@ jobs:
             native-smoke/effect-previews/
             native-smoke/emulator-host.log
             native-smoke/artifact-copy.log
+            /tmp/android-runner/emu-crash-*/
             native-smoke/ui-captures/

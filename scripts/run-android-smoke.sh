@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Preserve GPU thumbnails as each test completes, including on emulator failure.
 set -uo pipefail
+free -m
+ps -eo pid,ppid,rss,comm | grep -E "qemu|emulator" || true
 collect() {
   adb pull /sdcard/Android/data/io.github.cammo22.smoke/files/effect-previews native-smoke/ >>native-smoke/artifact-copy.log 2>&1 || true
   adb pull /sdcard/Android/data/io.github.cammo22.smoke/files/ui-captures native-smoke/ >>native-smoke/artifact-copy.log 2>&1 || true
