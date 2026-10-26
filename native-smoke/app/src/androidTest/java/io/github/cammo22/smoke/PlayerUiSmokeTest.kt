@@ -77,6 +77,14 @@ class PlayerUiSmokeTest {
  private fun ready(screen: ActivityScenario<PlayerSmokeActivity>) {
   await(screen, "Production player did not load its full catalog",
    "document.querySelectorAll('[data-accessible]').length===47 && !!document.querySelector('#mini-open')")
+  val deadline = SystemClock.elapsedRealtime() + 10000
+  var focused = false
+  do {
+   screen.onActivity { focused = it.hasWindowFocus() && it.playerView.hasWindowFocus() }
+   if (!focused) Thread.sleep(60)
+  } while (!focused && SystemClock.elapsedRealtime() < deadline)
+  assertTrue("Player activity and WebView did not receive window focus before input", focused)
+  painted(screen)
  }
 
  private fun painted(screen: ActivityScenario<PlayerSmokeActivity>) {
@@ -103,13 +111,16 @@ class PlayerUiSmokeTest {
  }
 
  private fun touch(screen: ActivityScenario<PlayerSmokeActivity>, action: Int, point: Pair<Float, Float>, down: Long) {
-  screen.onActivity {
-   val properties = MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_FINGER }
-   val coordinates = MotionEvent.PointerCoords().apply { x = point.first; y = point.second; pressure = 1f; size = 1f }
-   val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, 1, arrayOf(properties), arrayOf(coordinates), 0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, 0)
-   try { assertTrue("WebView rejected touch action $action", it.playerView.dispatchTouchEvent(event)) }
-   finally { event.recycle() }
-  }
+  // Input injection must run on the instrumentation thread. Route through the
+  // window/input system so Android applies touch mode and focus like real input.
+  assertNotSame("Pointer injection cannot run on the main thread", android.os.Looper.getMainLooper(), android.os.Looper.myLooper())
+  val origin = IntArray(2)
+  screen.onActivity { it.playerView.getLocationOnScreen(origin) }
+  val properties = MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_FINGER }
+  val coordinates = MotionEvent.PointerCoords().apply { x = origin[0] + point.first; y = origin[1] + point.second; pressure = 1f; size = 1f }
+  val event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, 1, arrayOf(properties), arrayOf(coordinates), 0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, 0)
+  try { InstrumentationRegistry.getInstrumentation().sendPointerSync(event) }
+  finally { event.recycle() }
  }
 
  private fun tap(screen: ActivityScenario<PlayerSmokeActivity>, selector: String) {
