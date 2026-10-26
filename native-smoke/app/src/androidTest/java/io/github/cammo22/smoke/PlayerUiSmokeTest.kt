@@ -48,7 +48,7 @@ class PlayerUiSmokeTest {
   } while (SystemClock.elapsedRealtime() < deadline)
   var console = ""
   screen.onActivity { console = it.console.joinToString("\n") }
-  fail("$message\nDOM: ${js(screen, "document.body.innerText.slice(-1800)")}\nConsole: $console")
+  fail("$message\nDOM: ${js(screen, "document.body.innerText.slice(-1800)")}\nInput trace: ${js(screen, "window.__dapInputTrace || []")}\nConsole: $console")
  }
 
  private fun capture(screen: ActivityScenario<PlayerSmokeActivity>, name: String) {
@@ -77,6 +77,20 @@ class PlayerUiSmokeTest {
  private fun ready(screen: ActivityScenario<PlayerSmokeActivity>) {
   await(screen, "Production player did not load its full catalog",
    "document.querySelectorAll('[data-accessible]').length===47 && !!document.querySelector('#mini-open')")
+  js(screen, """
+   (()=>{
+    if(!window.__dapInputTrace){
+     window.__dapInputTrace=[];
+     for(const type of ['pointerdown','pointerup','pointercancel','click','contextmenu']){
+      document.addEventListener(type,event=>{
+       window.__dapInputTrace.push({type:event.type,target:event.target?.id||'',nearestId:event.target?.closest?.('[id]')?.id||'',tag:event.target?.tagName||'',x:event.clientX,y:event.clientY,timeStamp:event.timeStamp,pointerId:event.pointerId});
+       if(window.__dapInputTrace.length>200)window.__dapInputTrace.shift();
+      },{capture:true,passive:true});
+     }
+    }
+    return true;
+   })()
+  """.trimIndent())
   val deadline = SystemClock.elapsedRealtime() + 10000
   var focused = false
   do {
@@ -221,8 +235,15 @@ class PlayerUiSmokeTest {
    capture(screen, "settings")
    assertEquals("Obsolete volume/intensity controls are still present", "false", js(screen, "!!document.querySelector('#volume,#intensity')"))
    assertEquals("Unexpected movement choices", "[\"Fluido\",\"Risparmio energia\",\"Off\"]", js(screen, "Array.from(document.querySelector('#motion').options,o=>o.text)"))
+   painted(screen)
+   // Hit the DOM backdrop within the app, away from SystemUI edge windows.
+   val backdrop = JSONArray(js(screen, "(()=>{const dialog=document.querySelector('#preferences'),r=dialog.getBoundingClientRect(),x=innerWidth/2,y=(40+r.top-8)/2;return [x,y,innerWidth,y>=40&&y<=innerHeight-40&&y<r.top&&document.elementFromPoint(x,y)===dialog]})()"))
+   assertTrue("No safe Settings backdrop point above the dialog", backdrop.getBoolean(3))
+   var backdropWidth = 0
+   screen.onActivity { backdropWidth = it.playerView.width }
+   val backdropScale = backdropWidth / backdrop.getDouble(2)
+   val outside = Pair((backdrop.getDouble(0) * backdropScale).toFloat(), (backdrop.getDouble(1) * backdropScale).toFloat())
    val down = SystemClock.uptimeMillis()
-   val outside = Pair(3f, 3f)
    touch(screen, MotionEvent.ACTION_DOWN, outside, down)
    touch(screen, MotionEvent.ACTION_UP, outside, down)
    await(screen, "A backdrop tap did not close Settings", "!document.querySelector('#preferences').open")

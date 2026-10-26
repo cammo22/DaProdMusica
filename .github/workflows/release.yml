@@ -30,7 +30,7 @@ jobs:
         run: |
           node -e "const p=require('./package.json'), t=require('./src-tauri/tauri.conf.json');if(p.version!==t.version)process.exit(1);console.log('value='+p.version)" >> "$GITHUB_OUTPUT"
   android:
-    needs: [verify,runtime]
+    needs: verify
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
