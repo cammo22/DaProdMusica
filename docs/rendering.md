@@ -18,4 +18,6 @@ Il widget usa [RemoteViews](https://developer.android.com/develop/ui/views/appwi
 
 I test Android avviano il player Vite reale nella WebView con MotionEvent touch: pressione lunga sul controllo Effetti, rilascio, scelta delle card, aperture successive, anteprime, tap sul backdrop e trascinamento del player con verifica della sua posizione durante il gesto. Una suite separata decodifica tutti i 47 brani, esercita MediaController in background e applica le RemoteViews del widget. L’emulatore verifica funzionalità, non misura prestazioni rappresentative di un telefono fisico.
 
-La CI usa SwiftShader con Vulkan disabilitato per la compatibilità della WebView, seguendo la [guida Android sui problemi grafici dell’emulatore](https://developer.android.com/studio/run/emulator-troubleshooting). I PNG generati vengono conservati anche se un test successivo interrompe l’emulatore.
+La CI usa il backend SwANGLE con Vulkan guest disabilitato per la compatibilità della WebView, seguendo la [guida Android sui problemi grafici dell’emulatore](https://developer.android.com/studio/run/emulator-troubleshooting). I PNG generati vengono conservati anche se un test successivo interrompe l’emulatore.
+
+Le anteprime provengono dagli shader reali: 21 dalla WebView Android e Corolla Sonora dal medesimo programma vertex/fragment su OpenGL del PC (`scripts/render-bloom-preview.py`), con uno spettro fisso di esempio. Tutte sono incluse nei pacchetti; la preparazione della release ne verifica presenza e dimensioni.
